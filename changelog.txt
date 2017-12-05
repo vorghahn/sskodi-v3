@@ -1,6 +1,7 @@
 ** 3.0.0  2017-12-04 **
 Left/Right on EPG scrolls past event better/faster.
 EPG loading time optimised
+Updated new SS Logo
 
 ** 0.9.0 **
 
