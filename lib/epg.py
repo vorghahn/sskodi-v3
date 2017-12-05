@@ -1,12 +1,12 @@
 import xbmc, xbmcgui
 import os
-import util
-import kodigui
-import smoothstreams
 import datetime
 import threading
 import URLDownloader
-from downloadregistry import DownloadRegistry
+from . import util
+from . import kodigui
+from . import smoothstreams
+from .downloadregistry import DownloadRegistry
 
 DOWNLOADER = None
 
