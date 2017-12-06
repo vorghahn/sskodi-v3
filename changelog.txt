@@ -1,3 +1,6 @@
+** 3.0.1  2017-12-06 **
+Category fix for EPG view
+
 ** 3.0.0  2017-12-04 **
 Left/Right on EPG scrolls past event better/faster.
 EPG loading time optimised

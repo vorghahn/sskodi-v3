@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.0.0"
+       version="3.0.1"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -16,10 +16,8 @@
         <summary lang="en">SmoothStreams.tv Official Kodi Addon</summary>
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
-        <news>v3.0.0  (2017-12-04)
-            - Left/Right on EPG scrolls past event better/faster.
-            - EPG loading time optimised
-            - Updated new SS Logo</news>
+        <news>v3.0.1  (2017-12-06)
+            - Category fix for EPG view</news>
         <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007.</license>
         <forum></forum>
         <website></website>

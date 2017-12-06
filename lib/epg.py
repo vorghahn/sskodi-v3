@@ -699,28 +699,34 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             item = self.epg.getListItem(idx)
             programs = self.manager.channels[idx].get('programs',[])
             shown = {}
+            
+            categories = self.manager.createCategoryFilter()
 
             for program in programs:
                 start = program.epg.start
+                stop = program.epg.stop
                 duration = program.epg.duration
                 end = start + duration
-                gridTime = start - self.manager.displayOffset
+                old = False
+                
+                if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
+                
+                    gridTime = start - self.manager.displayOffset
 
-                if start >= epgStart and start < epgEnd:
-                    shown[gridTime] = True
-                    item.setProperty('Program_{0}_Duration'.format(gridTime),str(duration))
-                    item.setProperty('Program_{0}_Label'.format(gridTime),program.title)
-                elif (end >= epgStart and end < epgEnd) or (start < epgStart and end > epgStart):
-                    duration -= (-30 - gridTime)
-                    if not duration: continue
-                    gridTime = -30
-                    shown[gridTime] = True
-                    item.setProperty('Program_{0}_Duration'.format(gridTime),str(duration))
-                    item.setProperty('Program_{0}_Label'.format(gridTime),program.title)
+                    if start >= epgStart and start < epgEnd:
+                        shown[gridTime] = True
+                        item.setProperty('Program_{0}_Duration'.format(gridTime),str(duration))
+                        item.setProperty('Program_{0}_Label'.format(gridTime),program.title)
+                    elif (end >= epgStart and end < epgEnd) or (start < epgStart and end > epgStart):
+                        duration -= (-30 - gridTime)
+                        if not duration: continue
+                        gridTime = -30
+                        shown[gridTime] = True
+                        item.setProperty('Program_{0}_Duration'.format(gridTime),str(duration))
+                        item.setProperty('Program_{0}_Label'.format(gridTime),program.title)
 
-                if gridTime in shown:
-                    item.setProperty('Program_{0}_Color'.format(gridTime),program.epg.colorGIF)
-
+                    if gridTime in shown:
+                        item.setProperty('Program_{0}_Color'.format(gridTime),program.epg.colorGIF)
             #Clear properties that we didn't set
             for s in gridRange:
                 if not s in shown:
