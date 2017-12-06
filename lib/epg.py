@@ -710,7 +710,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 old = False
                 
                 if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
-                
+
                     gridTime = start - self.manager.displayOffset
 
                     if start >= epgStart and start < epgEnd:
@@ -727,6 +727,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 
                     if gridTime in shown:
                         item.setProperty('Program_{0}_Color'.format(gridTime),program.epg.colorGIF)
+
             #Clear properties that we didn't set
             for s in gridRange:
                 if not s in shown:
@@ -812,11 +813,35 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 
     def _onAction(self,action):
         if action == xbmcgui.ACTION_MOVE_RIGHT:
+            if not self.getSelectedProgram():
+                self.moveRight()
+                self.updateInfo()
+            else:
+                temp = self.getSelectedProgram()
+                while self.getSelectedProgram():
+                    self.moveRight()
+                    self.updateInfo()
+                    if temp != self.getSelectedProgram():
+                        break
+                    
+        elif action == xbmcgui.ACTION_MOVE_LEFT:
+            if not self.getSelectedProgram():
+                self.moveLeft()
+                self.updateInfo()
+            else:
+                temp = self.getSelectedProgram()
+                while self.getSelectedProgram():
+                    self.moveLeft()
+                    self.updateInfo()
+                    if temp != self.getSelectedProgram():
+                        break
+
+        '''if action == xbmcgui.ACTION_MOVE_RIGHT:
             self.moveRight()
             self.updateInfo()
         elif action == xbmcgui.ACTION_MOVE_LEFT:
             self.moveLeft()
-            self.updateInfo()
+            self.updateInfo()'''
 
     def getMouseHover(self,action):
         x = action.getAmount1()
