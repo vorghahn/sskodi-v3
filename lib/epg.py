@@ -709,6 +709,13 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 end = start + duration
                 old = False
                 
+                #Temp fix for :15/:45 start or end of any program
+                if start % 10 != 0:
+                    start += 15
+                if duration % 10 != 0:
+                    duration += 15
+
+                
                 if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
 
                     gridTime = start - self.manager.displayOffset
