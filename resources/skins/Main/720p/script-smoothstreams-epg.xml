@@ -2377,6 +2377,7 @@
                     </control>
 
                     <control type="group">
+                        <visible>IsEmpty(Window.Property(program_title))</visible>
                         <description>Select</description>
                         <posx>-11</posx>
                         <posy>-1</posy>
@@ -2569,7 +2570,7 @@
                     <textcolor>FFFFFFFF</textcolor>
                     <label>[B]$INFO[Window.Property(program_category)][/B]</label>
                 </control>
-                <control type="textbox">
+                <!--<control type="textbox">
                     <posx>0</posx>
                     <posy>100</posy>
                     <width>600</width>
@@ -2579,7 +2580,7 @@
                     <textcolor>FFAAAAAA</textcolor>
                     <label>[B]$INFO[Window.Property(program_versions)][/B]</label>
                     <autoscroll delay="3000" time="1000" repeat="5000">true</autoscroll>
-                </control>
+                </control>-->
                 <control type="image">
                     <posx>705</posx>
                     <posy>152</posy>
@@ -2596,6 +2597,17 @@
                     <align>left</align>
                     <textcolor>FFFFFFFF</textcolor>
                     <label>[B]$INFO[Window.Property(program_title)][/B]</label>
+                </control>
+                <control type="label">
+                    <posx>0</posx>
+                    <posy>100</posy>
+                    <width>500</width>
+                    <font>font12</font>
+                    <align>left</align>
+                    <wrapmultiline>true</wrapmultiline>
+                    <scroll>true</scroll>
+                    <textcolor>FFFFFFFF</textcolor>
+                    <label>[B]$INFO[Window.Property(program_description)][/B]</label>
                 </control>
                 <control type="image">
                     <posx>728</posx>

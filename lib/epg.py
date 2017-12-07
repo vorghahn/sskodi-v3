@@ -870,6 +870,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         p = self.getSelectedProgram()
         if p:
             self.setProperty('program_title',p.title)
+            self.setProperty('program_description',p.description)
             self.setProperty('program_times',p.epg.timeDisplay)
             self.setProperty('program_quality',p.epg.quality)
             self.setProperty('program_versions',p.epg.versions)
@@ -877,6 +878,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.setProperty('program_flag','flags/{0}.png'.format(p.language))
         else:
             self.setProperty('program_title','')
+            self.setProperty('program_description','')
             self.setProperty('program_times','')
             self.setProperty('program_quality','')
             self.setProperty('program_versions','')
