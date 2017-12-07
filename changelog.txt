@@ -3,6 +3,10 @@ You should update to 17 if possible, as functionality may break going forward.
 
 ChangeLog: Version (YYYY-MM-DD)
 
+** 3.0.2  2017-12-07 **
+Added description of program in EPG view
+Fixed : Events with .15 and .45 times are black in EPG
+
 ** 3.0.1  2017-12-06 **
 Category fix for EPG view
 
