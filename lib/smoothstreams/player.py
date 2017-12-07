@@ -243,7 +243,8 @@ class ChannelPlayer():
         vHash = util.getSetting("SHash_{0}".format(self.serviceIDX))
         if not vHash: return None
         expires = util.getSetting("SHashExp_{0}".format(self.serviceIDX),0)
-        if time.time() > expires - 60: return None
+        #Hash regenerate time 2Hours (120 mins)
+        if time.time() > expires - 120: return None
         return vHash
 
     def getHash(self):
