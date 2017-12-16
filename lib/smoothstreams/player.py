@@ -86,7 +86,7 @@ class ChannelPlayer():
         self._play(url,item)
 
     def playFromChannel(self,channel):
-        url = self.getChanUrl(channel['id'])
+        url = self.getChanUrl(int(channel['ID']))
         item = xbmcgui.ListItem(channel['display-name'])
         item.setInfo('video', {'Title': channel['display-name'], 'Genre': 'Unknown'})
         self._play(url,item)

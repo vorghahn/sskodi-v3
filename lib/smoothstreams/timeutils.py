@@ -59,7 +59,7 @@ def timeInDayLocalSeconds():
     return int(nowLocalTimestamp() - startOfDayLocalTimestamp())
 
 def nowLocal():
-    return datetime.datetime.now()
+    return datetime.datetime.utcnow()
 
 def matchMinusOne(m):
     return str(int(m.group(0)) -1)
@@ -84,7 +84,8 @@ def convertStringToUTCTimestamp(date_str):
             dtobj = datetime.datetime.strptime(date_str_notz, '%Y%m%d%H%M%S')  # create dtobj w/str.
         except Exception as e:
             print "ERROR: I could not parse date_str :: {0} :: {1}".format(date_str, e)
-    dt = pytz.timezone("US/Eastern").localize(dtobj)  # localize since times expressed in eastern.
+	#Time changed to UTC
+    dt = pytz.timezone("UTC").localize(dtobj)  # localize since times expressed in eastern.
     utc_dt = pytz.utc.normalize(dt.astimezone(pytz.utc))  # convert to UTC, object is aware.
     # return "epoch seconds" from UTC.
     secs = timedelta_total_seconds(utc_dt - UTC_EPOCH)

@@ -683,7 +683,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
     def initChannels(self):
         items = []
         for channel in self.manager.channels:
-            item = xbmcgui.ListItem(channel['display-name'],str(channel['id']),iconImage=channel['logo'])
+            item = xbmcgui.ListItem(channel['display-name'],str(channel['ID']),iconImage=channel['logo'])
             items.append(item)
         self.epg.reset()
         self.epg.addItems(items)
@@ -880,7 +880,8 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.setProperty('program_description',p.description)
             self.setProperty('program_times',p.epg.timeDisplay)
             self.setProperty('program_quality',p.epg.quality)
-            self.setProperty('program_versions',p.epg.versions)
+            xbmcSelect, ver = self.getVersions(p)
+            self.setProperty('program_versions','[CR]'.join(ver))
             self.setProperty('program_category',p.category)
             self.setProperty('program_flag','flags/{0}.png'.format(p.language))
         else:
@@ -924,6 +925,47 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.prevItem()
         self.updateSelection(self.selectionTime)
 
+    def getVersions(self,program):
+
+        data = self.schedule.readProgramData()['data']
+        channel = []
+        flag = 0
+        if program.parrentID == '0':
+            for key,d in data.iteritems():
+                if not isinstance(d['events'],list):
+                    for key,e in d['events'].iteritems():
+                        if e['parent_id'] == program.eventID:
+                            channel.append(e)
+                        if key == program.eventID and flag == 0:
+                            flag = 1
+                            channel.append(e)
+            
+        else:
+            for key,d in data.iteritems():
+                if not isinstance(d['events'],list):
+                    for key,e in d['events'].iteritems():
+                        if e['parent_id'] == program.parrentID:
+                            channel.append(e)
+                        if key == program.parrentID and flag == 0:
+                            flag = 1
+                            channel.append(e)
+
+        def getKey(item):
+            return int(item['channel'])
+        schannel = sorted(channel, key=getKey)
+
+        d = util.xbmcDialogSelect()
+        ver = []
+        for v in schannel:
+            ch = data[v['channel']]['number']
+            if len(ch) == 1: ch = '0' + str(ch)
+            version = ch + " ( " + v['quality'] + " / " + v['language'].upper() + " )"
+            ver.append(version)
+            d.addItem(ch,version)
+        
+        #Here d is xbmcSelect options and ver is versions in python list
+        return d, ver
+
     def epgClicked(self):
         program = self.getSelectedProgram()
         if not program:
@@ -931,7 +973,19 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.player.play(channel)
             return
 
-        if util.getSetting('ask_version', True) and len(program.versions) > 1:
+        d, ver = self.getVersions(program)
+
+        if len(ver) > 1:
+            version = d.getResult()
+            if not version:
+                return
+        else:
+            #if only one version stream availalbe then do not pop up selection just get version and pass it to player.
+            version = ver[0].split(' (')[0]
+        channel = self.manager.getChannel(version)
+        self.player.play(channel)
+        return
+        '''if util.getSetting('ask_version', True) and len(program.versions) > 1:
             d = util.xbmcDialogSelect()
             for v in program.versions:
                 d.addItem(v, v)
@@ -947,7 +1001,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.player.play(channel)
             return
 
-        self.player.play(program)
+        self.player.play(program)'''
 
     def getSelectedChannel(self):
         idx = self.epg.getSelectedPosition()
@@ -1169,7 +1223,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             categories = [self.category]
         else:
             categories = self.manager.createCategoryFilter()
-
+        
         oldItems = []
         items = []
         self.progressItems = []

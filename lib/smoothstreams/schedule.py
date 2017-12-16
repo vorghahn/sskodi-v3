@@ -35,10 +35,13 @@ if (kodi_version < 17):
     JSONTVURL = 'http://fast-guide.smoothstreams.tv/feed.json'
 else:
     JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed.json'
+    JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed-new-latest.zip'
 
 LOGOBASE = '{0}'
 
-JSONFILE = os.path.join(util.PROFILE,"SmoothStreams.json")
+JSONFILE = os.path.join(util.PROFILE,"feed-new.json")
+JSONFILE_ZIP = os.path.join(util.PROFILE,"feed-new-latest.zip")
+JSONFILE_ZIP_DIR = util.PROFILE
 JSONFILE_ERROR = os.path.join(util.PROFILE,"SmoothStreams.json.error")
 
 SPORTS_TABLE = { 'soccer':          {'name':'World Football',   'color':'1E9C2A'},
@@ -76,18 +79,19 @@ SPORTS_TABLE = { 'soccer':          {'name':'World Football',   'color':'1E9C2A'
                  'ncaab':           {'name':'NCAAB',            'color':'B0372A'},
                  'olympics':        {'name':'Olympics',         'color':'808080'} }  #white
 
-SUBCATS = { 'NCAAF':     'American Football',
-            'NFL':       'American Football',
-            'NBA':       'Basketball',
-            'NCAAB':     'Basketball',
-            'Formula 1': 'Motor Sports',
-            'Nascar':    'Motor Sports',
-            'General TV':'TV Shows'
+SUBCATS = { '- NCAAF':     'American Football',
+            '- NFL':       'American Football',
+            '- NBA':       'Basketball',
+            '- NCAAB':     'Basketball',
+            '- Formula 1': 'Motor Sports',
+            '- Nascar':    'Motor Sports',
+            '- General TV':'TV Shows'
 }
 
-CATSUBS = { 'American Football':('NCAAF','NFL'),
-            'Basketball':('NBA','NCAAB'),
-            'Motor Sports':('Formula 1','Nascar'),
+CATSUBS = { 'American Football':('- NCAAF','- NFL'),
+            'Basketball':('- NBA','- NCAAB'),
+            'Motor Sports':('- Formula 1','- Nascar'),
+            'TV Shows':('- General TV'),
 
 }
 
@@ -122,9 +126,12 @@ class SSProgram(object):
     class EPGData(object):
         def __init__(self,program):
             self.program = program
-            self.color = SPORTS_TABLE.get(program.category.lower(),{}).get('color','808080')
+            
+            self.color = SPORTS_TABLE.get(program.categoryName.lower(),{}).get('color','808080')
             self.colorGIF = util.makeColorGif(self.color,os.path.join(util.COLOR_GIF_PATH,'{0}.gif'.format(self.color)))
             self.duration = (program.duration)/60
+            self.category = ''
+            self.icon = ''
             self.quality = ''
 
         def update(self):
@@ -152,11 +159,31 @@ class SSProgram(object):
             else:
                 endDisp = datetime.datetime.strftime(eDT,'%a {0}'.format(util.TIME_DISPLAY))
             self.startDisp = startDisp
+			import time
+            try:
+                t = time.strptime(startDisp.split(' ')[1], "%H:%M")
+                startDisp = time.strftime( "%H:%M", t )
+            except Exception as e:
+                t = time.strptime(startDisp, "%H:%M")
+                startDisp = time.strftime( "%H:%M", t )
+
+            try:
+                t = time.strptime(endDisp.split(' ')[1], "%H:%M")
+                endDisp = time.strftime( "%H:%M", t )
+            except Exception as e:
+                t = time.strptime(endDisp, "%H:%M")
+                endDisp = time.strftime( "%H:%M", t )
+
             self.timeDisplay = '{0} - {1}  ({2})'.format(startDisp,endDisp,self.program.displayDuration)
 
-    def __init__(self,pid,data,start_of_day):
-        self.start = timeutils.convertStringToUTCTimestamp(data['time'])
-        self.stop = timeutils.convertStringToUTCTimestamp(data['end_time'])
+    def __init__(self,pid,data,cat_name,start_of_day,categories):
+        #xxx  bug on OSX and apple TV
+        start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(data['time'])))
+        self.start = timeutils.convertStringToUTCTimestamp(start_time)
+        
+        end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(data['time']) + int(data['runtime'])*60))
+        self.stop = timeutils.convertStringToUTCTimestamp(end_time)
+        
         self.channel = int(data['channel'])
         self.title = fix_text(data['name'])
         self.network = data.get('network','')
@@ -164,7 +191,11 @@ class SSProgram(object):
         self.description = fix_text(data.get('description',''))
         self.channelName = ''
         self.channelParent = None
-
+        self.eventID = None
+        self.parrentID = None
+        self.categoryName = cat_name
+        self.catgid = None
+        
         version = data.get('version')
         self.versions = version and version.split(' ; ') or []
 
@@ -173,9 +204,9 @@ class SSProgram(object):
         if 'category' in data:  # stopgap for category.
             cat = data['category'] or 'None'
             if cat == '0': cat = 'Other Sports'
-            if cat in SUBCATS:
+            if categories[cat]['name'] in SUBCATS:
                 self.subcategory = cat
-                cat = SUBCATS[cat]
+                cat = SUBCATS[categories[cat]['name']]
             self.category = cat.replace('&amp;', '&')
         else:
             self.category = 'None'
@@ -223,6 +254,7 @@ class Schedule:
         self.sscachejson(age=3600)
         self.seenCategories = []
         self.seenSubCategories = []
+        self.tempChannelStore = {}
 
     @classmethod
     def sscachejson(cls,force=False,age=14400):
@@ -248,7 +280,31 @@ class Schedule:
                         util.ERROR("CacheJSON: Failed to open: {0} ({1})".format(JSONTVURL, e))
                         util.notify('Schedule Fetching Error','{0}'.format(e))
                     return False
+
+                #Write zip file at userdata location
                 try:
+                    handle = open(JSONFILE_ZIP, "wb")
+                    for chunk in response.iter_content(chunk_size=512):
+                        if chunk:  # filter out keep-alive new chunks
+                            handle.write(chunk)
+                    handle.close()
+                except Exception as e:
+                    util.ERROR("CacheJSON: Failed to write: {0} ({1})".format(JSONFILE_ZIP, e))
+                    util.notify('Schedule Fetching Error','{0}'.format(e))
+                    return False
+
+                #Open zip file and extract feed
+                try:
+                    import zipfile
+                    zip_ref = zipfile.ZipFile(JSONFILE_ZIP, 'r')
+                    zip_ref.extractall(JSONFILE_ZIP_DIR)
+                    zip_ref.close()
+                except Exception as e:
+                    util.ERROR("CacheJSON: Failed to extract: {0} ({1})".format(JSONFILE_ZIP, e))
+                    util.notify('Schedule Fetching Error','{0}'.format(e))
+                    return False
+                
+                '''try:
                     json.loads(response.text)
                 except Exception as e:  # if there is an exception, report and return.
                     util.ERROR("CacheJSON: ERROR PARSING received JSON: {0}".format(e))
@@ -269,7 +325,7 @@ class Schedule:
                         util.LOG("CacheJSON: Wrote JSONTVURL to cache.")
                     except Exception as e:
                         util.LOG("CacheJSON: ERROR writing JSONTVURL to cache :: {0}".format(e))
-                        return False
+                        return False'''
 
                 return True
         else:
@@ -329,7 +385,9 @@ class Schedule:
 
     def readChannels(self):
         """Read all channels in the file."""
-        tree = self._readJSON()
+
+        tree = self._readJSON().get('data')
+
         if not tree: return None
         # container for output.
         tmp_channels = {}
@@ -339,17 +397,24 @@ class Schedule:
             cid = int(k)
             displayname = v['name']
             logo = LOGOBASE.format(v['img'])
-            tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('channel_id'))
-        for cid in sorted(tmp_channels.keys()):
+            tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('number'))
+            
+        #Sort channel according to its id
+        def getKey(item):
+            return int(tmp_channels[item]['ID'])
+
+        tmp_tmp_channels = sorted(tmp_channels, key=getKey)
+        
+        for cid in tmp_tmp_channels:
             tmp = tmp_channels[cid]
             tmp['id'] = cid
             channels.append(tmp)
-        return channels
+        return channels, self._readJSON().get('categories')
 
     def readProgramData(self):
         """Return a list of SSProgram objects"""
         tree = self._readJSON()
-        if not tree: return {}
+        if not tree: return {}       
         return tree
 
     ####################
@@ -357,21 +422,39 @@ class Schedule:
     ####################
 
     def epg(self,start_of_day):
-        channels = self.readChannels()
+        channels,categories = self.readChannels()
+ 
         if channels == None:
             util.notify('Failed to get schedule','Please try again later')
             return []
         pid = 1
-        for k,v in self.readProgramData().items():
-            if not 'items' in v: continue
 
-            for elem in v['items']:
-                program = SSProgram(pid,elem,start_of_day)
+        for k,v in self.readProgramData().get('data').items():
+            if not 'events' in v: 
+                continue
+            if type(v['events']) == list:
+                continue
+            
+            for key,elem in v['events'].iteritems():                
+                elem['channel'] = k
+                cat_name = str(categories[elem['category']]['name'])
+                if cat_name.startswith('-'):
+                    cat_name = cat_name[2:]
+                program = SSProgram(pid,elem,cat_name,start_of_day,categories)
+
                 channel = self._getChannel(channels, program.channel)
                 program.channelParent = channel
+                program.eventID = key
+                program.parrentID = elem['parent_id']
                 if not 'programs' in channel: channel['programs'] = []
                 programs = channel['programs']
+                try:
+                    program.catgid = program.category
+                    program.category = categories[program.category]['name']
+                    program.color = program.category['color']
 
+                except Exception as e:
+                    pass
                 if not program.category in self.seenCategories: self.seenCategories.append(program.category)
                 if program.subcategory and not program.subcategory in self.seenSubCategories: self.seenSubCategories.append(program.subcategory)
                 program.channelName = channel['display-name']
@@ -381,7 +464,8 @@ class Schedule:
         return channels
 
     def categories(self,subs=False):
-        if not subs: return sorted(self.seenCategories)
+        if not subs:  return sorted([s for s in self.seenCategories if not s.startswith('-')])
+        #if not subs: return sorted(self.seenCategories)
         cats = []
         for c in sorted(self.seenCategories):
             cats.append(c)
