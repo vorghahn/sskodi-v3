@@ -70,12 +70,15 @@ class ChannelPlayer():
         else:
             program = item.currentProgram()
             if program:
-                self.playFromProgram(program)
+                self.playFromProgram(program,item['ID'])
             else:
                 self.playFromChannel(item)
 
-    def playFromProgram(self,program):
-        url = self.getChanUrl(program.channel)
+    def playFromProgram(self,program, ID=0):
+        channel = program.channel
+        if ID:
+            channel = ID
+        url = self.getChanUrl(int(channel))
         item = xbmcgui.ListItem(program.title)
         info = {'Title': program.title,
                 'Genre': program.category,
