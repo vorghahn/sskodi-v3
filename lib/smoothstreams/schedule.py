@@ -160,20 +160,6 @@ class SSProgram(object):
             else:
                 endDisp = datetime.datetime.strftime(eDT,'%a {0}'.format(util.TIME_DISPLAY))
             self.startDisp = startDisp
-			import time
-            try:
-                t = time.strptime(startDisp.split(' ')[1], "%H:%M")
-                startDisp = time.strftime( "%H:%M", t )
-            except Exception as e:
-                t = time.strptime(startDisp, "%H:%M")
-                startDisp = time.strftime( "%H:%M", t )
-
-            try:
-                t = time.strptime(endDisp.split(' ')[1], "%H:%M")
-                endDisp = time.strftime( "%H:%M", t )
-            except Exception as e:
-                t = time.strptime(endDisp, "%H:%M")
-                endDisp = time.strftime( "%H:%M", t )
 
             self.timeDisplay = '{0} - {1}  ({2})'.format(startDisp,endDisp,self.program.displayDuration)
 
