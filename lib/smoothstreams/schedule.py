@@ -33,6 +33,7 @@ def htmlentitydecode(s):
 kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.', 1)[0])
 if (kodi_version < 17):
     JSONTVURL = 'http://fast-guide.smoothstreams.tv/feed.json'
+    JSONTVURL = 'http://fast-guide.smoothstreams.tv/feed-new-latest.zip'
 else:
     JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed.json'
     JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed-new-latest.zip'
