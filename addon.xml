@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.0.5"
+       version="3.0.7"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -16,8 +16,15 @@
         <summary lang="en">SmoothStreams.tv Official Kodi Addon</summary>
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
-        <news>v3.0.5  (2017-12-14)
-            - Improve Initial and overall loading times</news>
+        <news>v3.0.7  (2017-12-15)
+            - Show time in 12 hour format is fixed
+            - Improve Initial and overall loading times
+            - Added description of program in EPG view
+            - Fixed : Events with .15 and .45 times are black in EPG
+            - Category fix for EPG view
+            - Left/Right on EPG scrolls past event better/faster.
+            - EPG loading time optimized
+            - New SS Logo</news>
         <license>GNU GENERAL PUBLIC LICENSE. Version 3, 29 June 2007.</license>
         <forum></forum>
         <website></website>

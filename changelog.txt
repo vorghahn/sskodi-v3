@@ -3,8 +3,11 @@ You should update to 17 if possible, as functionality may break going forward.
 
 ChangeLog: Version (YYYY-MM-DD)
 
-+** 3.0.5  2017-12-14 **
-+Improve Initial and overall loading times
+** 3.0.7  2017-12-15 **
+Show time in 12 hour format is fixed
+
+** 3.0.5  2017-12-14 **
+Improve Initial and overall loading times
 
 ** 3.0.2  2017-12-07 **
 Added description of program in EPG view
