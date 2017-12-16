@@ -89,6 +89,8 @@ class ViewManager(object):
         self.lowerLimit = self.displayOffset - (24 * 60 * util.getSetting("schedule_minus_limiter",2))
 
     def getChannel(self, number):
+        if str(number).startswith('0'):
+            number = str(number)[1]
         for c in self.channels:
             if number == c.get('ID'):
                 return c
