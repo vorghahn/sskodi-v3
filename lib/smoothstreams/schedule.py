@@ -137,10 +137,10 @@ class SSProgram(object):
 
         def update(self):
             if self.program.quality:
-                if '720p' in self.program.quality:
+                if 'HD' in self.program.quality:
                     self.quality = 'script-smoothstreams-hd_720p.png'
-                elif '1080i' in self.program.quality:
-                    self.quality = 'script-smoothstreams-hd_1080i.png'
+                elif 'HQLQ' in self.program.quality:
+                    self.quality = 'script-smoothstreams-HQ.png'
             self.versions = '[CR]'.join(self.program.versions)
 
             localTZ = timeutils.LOCAL_TIMEZONE
@@ -197,9 +197,8 @@ class SSProgram(object):
             self.category = cat.replace('&amp;', '&')
         else:
             self.category = 'None'
-
+        
         self.quality = data.get('quality') or None
-
         self.setDuration()
 
         self.epg = SSProgram.EPGData(self)

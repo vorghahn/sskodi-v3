@@ -21,11 +21,11 @@ def setLocalTimezone(from_offset=None):
     else:
         try:
             LOCAL_TIMEZONE = tzlocal.get_localzone()
-        except:
+        except Exception as e:
             try:
                 from dateutil.tz import tzlocal
-                LOCAL_TIMEZONE = tzlocal()
-            except:
+                LOCAL_TIMEZONE = pytz.UTC
+            except Exception as e:
                 from compat import timezone_guess
                 LOCAL_TIMEZONE = timezone_guess(int(timedelta_total_seconds(datetime.datetime.now() - datetime.datetime.utcnow())))
 

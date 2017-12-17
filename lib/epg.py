@@ -1030,7 +1030,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
     def __init__(self,*args,**kwargs):
         self.manager = kwargs['manager']
         self.categories = self.manager.schedule.categories()
-        self.category = None
+        self.category = []
         self.started = False
         self.lastHalfHour = 0
         self.progressItems = []
@@ -1152,14 +1152,54 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             self.programSelected()
 
     def categorySelected(self):
+        data = self.manager.schedule.categories(util.getSetting('show_subcategories',False))
+        
         item = self.categoryList.getSelectedItem()
-        if not item: return
-        cat = item.getProperty('category')
-        if not cat:
-            self.category = None
+        name = item.getProperty('category')
+        if name == "ALL":
+            for d in range(1,len(data)+1):
+                i = self.categoryList.getListItem(d)
+                if item.getProperty('selected') == 'true':
+                    i.setProperty('selected','false')
+                else:
+                    i.setProperty('selected','true')
+                    self.category.append(i.getProperty('category'))
+            
+            if item.getProperty('selected') == 'false':
+                item.setProperty('selected','true')
+            else:
+                item.setProperty('selected','false')
+                self.category = []
+
+            self.showPrograms()
+            return
+        stat = item.getProperty('selected')
+
+        if str(stat) == 'false' or stat == '':
+            xbmc.log("Make true...",2)
+            item.setProperty('selected','true')
+        else: 
+            xbmc.log("Make false...",2)
+            item.setProperty('selected','false')
+        xbmc.log(str(item.getProperty('selected')),2)
+
+        for d in range(0,len(data)+1):
+            i = self.categoryList.getListItem(d)
+            cat = i.getProperty('category')
+            xbmc.log(str(cat),2)
+            if i.getProperty('selected') == 'true':
+                xbmc.log("Adding in list",2)
+                if cat not in self.category: self.category.append(cat)
+            else:
+                xbmc.log("Deleting from list",2)
+                if cat in self.category: self.category.remove(cat)
+
+        '''if not cat:
+            self.category = []
         else:
-            self.category = cat
-        self.setProperty('category',item.getLabel().strip('- '))
+            self.category.append(cat)'''
+        
+        #self.setProperty('category',item.getLabel().strip('- '))
         self.showPrograms()
 
     def programSelected(self):
@@ -1168,10 +1208,8 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         self.manager.player.play(item.dataSource)
 
     def showPrograms(self):
-        if not self.showList():
-            xbmcgui.Dialog().ok('No Programs','No items in this category.')
-            return
-        self.setFocusId(201)
+        self.showList()
+        return
 
     def getGifPath(self,c):
         hexColor = smoothstreams.schedule.SPORTS_TABLE.get(c.lower(),{}).get('color','808080')
@@ -1181,10 +1219,17 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         items = []
         item = xbmcgui.ListItem('All')
         item.setProperty('color', util.makeColorGif('FFFFFFFF',os.path.join(util.COLOR_GIF_PATH,'{0}.gif'.format('FFFFFFFF'))))
+        item.setProperty('category','ALL')
+        self.category.append("ALL")
+        item.setProperty('selected','true')
+        xbmc.log(str(util.makeColorGif('FFFFFFFF',os.path.join(util.COLOR_GIF_PATH,'{0}.gif'.format('FFFFFFFF')))),2)
         items.append(item)
+        
         for c in self.manager.schedule.categories(util.getSetting('show_subcategories',False)):
             item = xbmcgui.ListItem(c)
+            self.category.append(c.strip('- '))
             item.setProperty('category',c.strip('- '))
+            item.setProperty('selected','true')
             item.setProperty('color',self.getGifPath(c))
             items.append(item)
         self.categoryList.reset()
@@ -1221,11 +1266,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         item.setProperty('sort',str(sort))
 
     def showList(self):
-        if self.category:
-            categories = [self.category]
-        else:
-            categories = self.manager.createCategoryFilter()
-        
+        categories = self.category
         oldItems = []
         items = []
         self.progressItems = []
@@ -1256,7 +1297,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                         item.setProperty('playing',tex)
                         self.progressItems.append(item)
                     item.setProperty('sort',str(sort))
-                    item.setProperty('channel',str(channel['id']))
+                    item.setProperty('channel',str(channel['ID']))
                     item.setProperty('duration',program.displayDuration)
                     item.setProperty('quality',program.epg.quality)
                     item.setProperty('color',program.epg.colorGIF)

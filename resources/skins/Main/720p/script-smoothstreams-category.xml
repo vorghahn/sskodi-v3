@@ -437,7 +437,26 @@
                         <colordiffuse>FF606060</colordiffuse>
                         <aspectratio>stretch</aspectratio>
                     </control>
-
+                    
+                    <control type="image">
+                        <posx>330</posx>
+                        <posy>15</posy>
+                        <width>20</width>
+                        <height>20</height>
+                        <visible>true</visible>
+                        <texture>colors/FFFFFFFF.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>326</posx>
+                        <posy>10</posy>
+                        <width>30</width>
+                        <height>30</height>
+                        <visible>StringCompare(ListItem.Property(selected),true)</visible>
+                        <texture>colors/tick.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    
                     <control type="label">
                         <posx>115</posx>
                         <posy>0</posy>
@@ -471,7 +490,26 @@
                         <colordiffuse>FF909090</colordiffuse>
                         <aspectratio>stretch</aspectratio>
                     </control>
-
+                    
+                    <control type="image">
+                        <posx>330</posx>
+                        <posy>15</posy>
+                        <width>20</width>
+                        <height>20</height>
+                        <visible>true</visible>
+                        <texture>colors/FFFFFFFF.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    <control type="image">
+                        <posx>326</posx>
+                        <posy>10</posy>
+                        <width>30</width>
+                        <height>30</height>
+                        <visible>StringCompare(ListItem.Property(selected),true)</visible>
+                        <texture>colors/tick.png</texture>
+                        <aspectratio>stretch</aspectratio>
+                    </control>
+                    
                     <control type="label">
                         <posx>114</posx>
                         <posy>0</posy>
