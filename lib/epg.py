@@ -1395,7 +1395,7 @@ class KodiChannelEntry(BaseDialog):
         self.digits = int(self.digits)
         self.set = True
         for channel in self.manager.channels:
-            if channel['id'] == self.digits:
+            if channel['ID'] == str(self.digits):
                 self.manager.player.play(channel)
                 break
         self.close()
