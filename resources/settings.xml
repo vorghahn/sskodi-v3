@@ -3,7 +3,7 @@
 
   <!-- General -->
   <category label="30225">
-    <setting id="service" type="enum" label="30218" lvalues="30327|30328|30330|30332|30335" default="0" />
+    <setting id="service" type="enum" label="30218" lvalues="30328|30330|30332|30335" default="0" />
     <setting id="username" type="text" label="30201" default="" />
     <setting id="user_password" type="text" option="hidden" label="30202" enable="!eq(-1,)" default="" />
     <setting id="auto_server" type="bool" label="30219" default="false" />
