@@ -3,7 +3,19 @@ You should update to 17 if possible, as functionality may break going forward.
 
 ChangeLog: Version (YYYY-MM-DD)
 
-** v3.0.9  (2017-12-16) **
+** 3.1.0  (2017-12-18) **
+Manually entering a channel number is not working
+Category selection improvements
+Show time in 12 hour format is fixed
+Improve Initial and overall loading times
+Added description of program in EPG view
+Fixed : Events with .15 and .45 times are black in EPG
+Category fix for EPG view
+Left/Right on EPG scrolls past event better/faster.
+EPG loading time optimized
+New SS Logo
+
+** 3.0.9  (2017-12-16) **
 Category selection improvements
 Show time in 12 hour format is fixed
 Improve Initial and overall loading times
