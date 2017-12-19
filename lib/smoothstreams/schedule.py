@@ -163,7 +163,7 @@ class SSProgram(object):
 
             self.timeDisplay = '{0} - {1}  ({2})'.format(startDisp,endDisp,self.program.displayDuration)
 
-    def __init__(self,pid,data,cat_name,start_of_day,categories):
+    def __init__(self,pid,data,cat_name,start_of_day,categories,channel_number):
         #xxx  bug on OSX and apple TV
         start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(data['time'])))
         self.start = timeutils.convertStringToUTCTimestamp(start_time)
@@ -172,6 +172,7 @@ class SSProgram(object):
         self.stop = timeutils.convertStringToUTCTimestamp(end_time)
         
         self.channel = int(data['channel'])
+        self.channel_number = channel_number
         self.title = fix_text(data['name'])
         self.network = data.get('network','')
         self.language = data.get('language','')[:2].upper()
@@ -288,30 +289,7 @@ class Schedule:
                 except Exception as e:
                     util.ERROR("CacheJSON: Failed to extract: {0} ({1})".format(JSONFILE_ZIP, e))
                     util.notify('Schedule Fetching Error','{0}'.format(e))
-                    return False
-                
-                '''try:
-                    json.loads(response.text)
-                except Exception as e:  # if there is an exception, report and return.
-                    util.ERROR("CacheJSON: ERROR PARSING received JSON: {0}".format(e))
-                    try:
-                        with open(JSONFILE_ERROR,'w') as f: f.write(response.text)
-                    except:
-                        util.ERROR()
-                    if first:
-                        util.LOG("CacheJSON: Failed - retrying...")
-                        continue
-                    else:
-                        util.notify('Schedule Parsing Error','{0}'.format(e))
-                    return False
-                # if XML verifies, write to cachefile.
-                with open(JSONFILE, 'w') as cache:
-                    try:
-                        cache.writelines(response.text)
-                        util.LOG("CacheJSON: Wrote JSONTVURL to cache.")
-                    except Exception as e:
-                        util.LOG("CacheJSON: ERROR writing JSONTVURL to cache :: {0}".format(e))
-                        return False'''
+                    return False                
 
                 return True
         else:
@@ -414,7 +392,6 @@ class Schedule:
             util.notify('Failed to get schedule','Please try again later')
             return []
         pid = 1
-
         for k,v in self.readProgramData().get('data').items():
             if not 'events' in v: 
                 continue
@@ -426,9 +403,9 @@ class Schedule:
                 cat_name = str(categories[elem['category']]['name'])
                 if cat_name.startswith('-'):
                     cat_name = cat_name[2:]
-                program = SSProgram(pid,elem,cat_name,start_of_day,categories)
-
+                program = SSProgram(pid,elem,cat_name,start_of_day,categories,v['number'])
                 channel = self._getChannel(channels, program.channel)
+
                 program.channelParent = channel
                 program.eventID = key
                 program.parrentID = elem['parent_id']

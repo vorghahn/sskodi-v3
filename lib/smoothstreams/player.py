@@ -64,7 +64,9 @@ class ChannelPlayer():
     def play(self,item):
         if item._ssType == 'PROGRAM':
             if item.isAiring():
-                self.playFromProgram(item)
+                ch = item.channel_number
+                if len(ch) == 1: ch = '0' + str(ch)
+                self.playFromProgram(item,ch)
             else:
                 self.playFromChannel(item.channelParent)
         else:
