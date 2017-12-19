@@ -29,7 +29,7 @@
 
         <control type="label">
             <posx>30</posx>
-            <posy>10</posy>
+            <posy>680</posy>
             <width>300</width>
             <height>50</height>
             <font>font12</font>
@@ -39,6 +39,17 @@
             <info>Window.Property(version)</info>
         </control>
         <control type="label">
+            <posx>40</posx>
+            <posy>10</posy>
+            <width>300</width>
+            <height>50</height>
+            <font>font12</font>
+            <align>left</align>
+            <aligny>center</aligny>
+            <textcolor>FFFFFFFF</textcolor>
+            <label>MM-DD : HH:MM</label>
+        </control>
+        <control type="label">
             <posx>1250</posx>
             <posy>10</posy>
             <width>300</width>
@@ -46,8 +57,8 @@
             <font>font12</font>
             <align>right</align>
             <aligny>center</aligny>
-            <textcolor>FF1B6DB9</textcolor>
-            <label>[B]$INFO[System.Time][/B]</label>
+            <textcolor>FFFFFFFF</textcolor>
+            <label>Current time:   [B]$INFO[System.Time][/B]</label>
         </control>
 
         <control type="image">
@@ -137,24 +148,24 @@
                         <control type="label">
                             <posx>1043</posx>
                             <posy>5</posy>
-                            <width>30</width>
-                            <height>10</height>
-                            <font>font10</font>
+                            <width>35</width>
+                            <height>50</height>
+                            <font>font13</font>
                             <align>left</align>
                             <textcolor>FF000000</textcolor>
                             <label>[B]$INFO[ListItem.Property(channel)][/B]</label>
                         </control>
-                        <control type="image">
+                        <!--<control type="image">
                             <posx>1043</posx>
                             <posy>30</posy>
                             <width>21</width>
                             <height>14</height>
                             <texture>$INFO[ListItem.Property(flag)]</texture>
-                        </control>
+                        </control>-->
                         <control type="label">
                             <posx>10</posx>
                             <posy>0</posy>
-                            <width>160</width>
+                            <width>165</width>
                             <height>50</height>
                             <font>font13</font>
                             <align>left</align>
@@ -185,6 +196,13 @@
                         <aligny>center</aligny>
                         <textcolor>FFFFFFFF</textcolor>
                         <label>[B]$INFO[ListItem.Property(duration)][/B]</label>
+                    </control>
+                    <control type="image">
+                        <posx>939</posx>
+                        <posy>12</posy>
+                        <width>42</width>
+                        <height>25</height>
+                        <texture>$INFO[ListItem.Property(flag)]</texture>
                     </control>
                     <control type="image">
                         <posx>984</posx>
@@ -265,24 +283,24 @@
                         <control type="label">
                             <posx>1043</posx>
                             <posy>5</posy>
-                            <width>30</width>
-                            <height>10</height>
-                            <font>font10</font>
+                            <width>35</width>
+                            <height>50</height>
+                            <font>font13</font>
                             <align>left</align>
                             <textcolor>FF000000</textcolor>
                             <label>[B]$INFO[ListItem.Property(channel)][/B]</label>
                         </control>
-                        <control type="image">
+                        <!--<control type="image">
                             <posx>1043</posx>
                             <posy>30</posy>
                             <width>21</width>
                             <height>14</height>
                             <texture>$INFO[ListItem.Property(flag)]</texture>
-                        </control>
+                        </control>-->
                         <control type="label">
                             <posx>10</posx>
                             <posy>0</posy>
-                            <width>160</width>
+                            <width>165</width>
                             <height>50</height>
                             <font>font13</font>
                             <align>left</align>
@@ -313,6 +331,13 @@
                         <aligny>center</aligny>
                         <textcolor>FFFFFFFF</textcolor>
                         <label>[B]$INFO[ListItem.Property(duration)][/B]</label>
+                    </control>
+                    <control type="image">
+                        <posx>939</posx>
+                        <posy>12</posy>
+                        <width>42</width>
+                        <height>25</height>
+                        <texture>$INFO[ListItem.Property(flag)]</texture>
                     </control>
                     <control type="image">
                         <posx>984</posx>

@@ -43,6 +43,7 @@ class ViewManager(object):
         self.window = None
         self.mode = None
         self.cron = None
+        self.search_key = ''
         if util.getSetting('default_mode',0) == 1:
             self.mode = 'CATS'
         elif util.getSetting('default_mode',0) == 2:
@@ -199,11 +200,15 @@ class ViewManager(object):
     def _doContextMenu(self,show_download=True):
         item = self.getSelectedProgramOrChannel()
         d = util.xbmcDialogSelect()
-        if self.mode == 'EPG':
+        if not self.search_key == '':
+            return
+
+        if util.getSetting('last_mode') == 'EPG':
             d.addItem('categories','View->[B]List[/B]')
         else:
             d.addItem('epg','View->[B]EPG[/B]')
         d.addItem('play_channel','Play Channel')
+        d.addItem('search_event','Search by keyword...')
         if show_download:
             if item._ssType == 'PROGRAM':
                 if item.isAiring():
@@ -225,8 +230,9 @@ class ViewManager(object):
 
         selection = d.getResult()
         if selection == None: return
-
-        if selection == 'download':
+        if selection == 'search_event':
+            self.search()
+        elif selection == 'download':
             self.record(item)
         elif selection == 'schedule':
             self.scheduleRecording(item)
@@ -249,6 +255,21 @@ class ViewManager(object):
             self.window.close()
             if util.getSetting('fullscreen_on_exit',True): self.fullscreenVideo()
 
+    def search(self):
+        keyword = xbmcgui.Dialog().input('Enter search keyword')
+        if not keyword:
+            return
+        self.search_key = keyword
+
+        self.window_search = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.window_search.doModal()
+        self.window_search.onClosed()
+        del self.window_search
+
+        self.search_key = ''
+        self.window_search = None
+
+    
     def showSettings(self):
         gmtOffsetOld = util.getSetting('gmt_offset',0)
         old12HourTimes = util.getSetting('12_hour_times',False)
@@ -829,9 +850,9 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 temp = self.getSelectedProgram()
                 while self.getSelectedProgram():
                     self.moveRight()
-                    self.updateInfo()
                     if temp != self.getSelectedProgram():
                         break
+                self.updateInfo()
                     
         elif action == xbmcgui.ACTION_MOVE_LEFT:
             if not self.getSelectedProgram():
@@ -1045,7 +1066,9 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         self.categoryList = self.getControl(101)
         self.programsList = kodigui.ManagedControlList(self,201,11)
         self.fillCategories()
-        self.setProperty('category','All')
+        self.setProperty('category','ALL')
+        if not self.manager.search_key == '':
+            self.setProperty('category','Search Results for: ' + str(self.manager.search_key))
         self.showList()
         self.setFocusId(200)
         self.manager.cron.registerReceiver(self)
@@ -1167,10 +1190,10 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             
             if item.getProperty('selected') == 'false':
                 item.setProperty('selected','true')
+                if not 'ALL' in self.category:  self.category.append('ALL')
             else:
                 item.setProperty('selected','false')
                 self.category = []
-
             self.showPrograms()
             return
         stat = item.getProperty('selected')
@@ -1181,7 +1204,6 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         for d in range(0,len(data)+1):
             i = self.categoryList.getListItem(d)
             cat = i.getProperty('category')
-            xbmc.log(str(cat),2)
             if i.getProperty('selected') == 'true':
                 if cat not in self.category: self.category.append(cat)
             else:
@@ -1209,7 +1231,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         item.setProperty('category','ALL')
         self.category.append("ALL")
         item.setProperty('selected','true')
-        xbmc.log(str(util.makeColorGif('FFFFFFFF',os.path.join(util.COLOR_GIF_PATH,'{0}.gif'.format('FFFFFFFF')))),2)
+        
         items.append(item)
         
         for c in self.manager.schedule.categories(util.getSetting('show_subcategories',False)):
@@ -1221,6 +1243,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             items.append(item)
         self.categoryList.reset()
         self.categoryList.addItems(items)
+        self.categoryCount = len(items)
 
     def refresh(self):
         pos = self.programsList.getSelectedPosition()
@@ -1254,6 +1277,10 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
 
     def showList(self):
         categories = self.category
+        if self.manager.search_key == '':
+            self.setProperty('category','ALL')
+            if not self.categoryCount == len(categories):
+                self.setProperty('category','FILTERED')
         oldItems = []
         items = []
         self.progressItems = []
@@ -1263,6 +1290,8 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         for channel in self.manager.channels:
             if not 'programs' in channel: continue
             for program in channel['programs']:
+                if not self.manager.search_key == '' and not self.manager.search_key.lower() in program.title.lower():
+                    continue
                 start = program.epg.start
                 stop = program.epg.stop
                 old = False
@@ -1272,7 +1301,22 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                         timeDisp = datetime.datetime.strftime(dt,util.TIME_DISPLAY)
                     else:
                         timeDisp = datetime.datetime.strftime(dt,'%a {0}'.format(util.TIME_DISPLAY))
-                    item = kodigui.ManagedListItem(program.title,timeDisp,iconImage=channel['logo'],data_source=program)
+
+                    if util.getSetting('12_hour_times') == 'true':
+                        if len(str(timeDisp).split(' ')) > 2:
+                            t = str(timeDisp).split(' ',1)[1]
+                            disp_time = str(str(dt).split(' ',1)[0].split('-',1)[1]) + '   : ' + str(t)
+                        else:
+                            t = str(timeDisp)
+                            disp_time = 'Today : ' + t
+                    else:
+                        if len(str(timeDisp).split(' ')) > 1:
+                            t = str(timeDisp).split(' ',1)[1]
+                            disp_time = str(str(dt).split(' ',1)[0].split('-',1)[1]) + '   : ' + str(t)
+                        else:
+                            t = str(timeDisp)
+                            disp_time = 'Today : ' + t
+                    item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['logo'],data_source=program)
                     sort = (((start * 1440) + stop ) * 100) + program.channel
                     if stop <= timeInDay:
                         item.setProperty('old','old')
