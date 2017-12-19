@@ -1175,31 +1175,18 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             return
         stat = item.getProperty('selected')
 
-        if str(stat) == 'false' or stat == '':
-            xbmc.log("Make true...",2)
-            item.setProperty('selected','true')
-        else: 
-            xbmc.log("Make false...",2)
-            item.setProperty('selected','false')
-        xbmc.log(str(item.getProperty('selected')),2)
+        if str(stat) == 'false' or stat == '':  item.setProperty('selected','true')
+        else:                                   item.setProperty('selected','false')
 
         for d in range(0,len(data)+1):
             i = self.categoryList.getListItem(d)
             cat = i.getProperty('category')
             xbmc.log(str(cat),2)
             if i.getProperty('selected') == 'true':
-                xbmc.log("Adding in list",2)
                 if cat not in self.category: self.category.append(cat)
             else:
-                xbmc.log("Deleting from list",2)
                 if cat in self.category: self.category.remove(cat)
-
-        '''if not cat:
-            self.category = []
-        else:
-            self.category.append(cat)'''
         
-        #self.setProperty('category',item.getLabel().strip('- '))
         self.showPrograms()
 
     def programSelected(self):
