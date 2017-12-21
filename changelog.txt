@@ -4,6 +4,9 @@ You should update to 17 if possible, as functionality may break going forward.
 ChangeLog: Version (YYYY-MM-DD)
 
 ** 3.1.1  (2017-12-19) **
+- MS service removed
+
+** 3.1.1  (2017-12-19) **
 List view updated with few changes
 Search feature added
 [FIXED]: Wrong channel playing in list view
