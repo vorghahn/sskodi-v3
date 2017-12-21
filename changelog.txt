@@ -3,8 +3,16 @@ You should update to 17 if possible, as functionality may break going forward.
 
 ChangeLog: Version (YYYY-MM-DD)
 
+Upcomming/Known issues:
+Full EPG with start times of xx:15 or xx:45 are black
+Category filters will be synced within addon settings (Bi-directional)
+
+v3.1.3  (2017-12-21)
+Full Guide (ON/OFF) available in Settings/Options
+[Fixed]: Events with duration (15/45/75/105/135) were not displaying
+
 ** 3.1.1  (2017-12-19) **
-- MS service removed
+MS service removed
 
 ** 3.1.1  (2017-12-19) **
 List view updated with few changes
