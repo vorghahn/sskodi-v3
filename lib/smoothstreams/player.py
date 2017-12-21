@@ -36,7 +36,6 @@ class ChannelPlayer():
         HASH_LOGIN = 'http://auth.smoothstreams.tv/hash_api.php?site={site}&username={user}&password={password}'
         MMA_HASH_LOGIN = 'http://www.MMA-TV.net/loginForm.php?username={user}&password={password}&site={site}'
         services = (
-            {'name':'Mystreams/uSport', 'site':"viewms",     'rtmp_port':3655, 'hls_port':9100, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'Live247.tv',       'site':"view247",    'rtmp_port':3625, 'hls_port':9100, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'StarStreams',      'site':"viewss",     'rtmp_port':3665, 'hls_port':9100, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'MMA SR+',          'site':"viewmmasr",  'rtmp_port':3635, 'hls_port':9100, 'login':MMA_HASH_LOGIN, 'servers':servers, 'servers_sett':'server'},
@@ -46,7 +45,6 @@ class ChannelPlayer():
         HASH_LOGIN = 'https://auth.smoothstreams.tv/hash_api.php?site={site}&username={user}&password={password}'
         MMA_HASH_LOGIN = 'https://www.MMA-TV.net/loginForm.php?username={user}&password={password}&site={site}'
         services = (
-            {'name':'Mystreams/uSport', 'site':"viewms",     'rtmp_port':3655, 'hls_port':443, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'Live247.tv',       'site':"view247",    'rtmp_port':3625, 'hls_port':443, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'StarStreams',      'site':"viewss",     'rtmp_port':3665, 'hls_port':443, 'login':HASH_LOGIN,     'servers':servers, 'servers_sett':'server'},
             {'name':'MMA SR+',          'site':"viewmmasr",  'rtmp_port':3635, 'hls_port':443, 'login':MMA_HASH_LOGIN, 'servers':servers, 'servers_sett':'server'},
