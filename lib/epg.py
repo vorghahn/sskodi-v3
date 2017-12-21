@@ -29,9 +29,14 @@ class ViewManager(object):
         self.start()
 
     @util.busyDialog
-    def initialize(self):
-        self.schedule = smoothstreams.Schedule()
-        self.channels = self.schedule.epg(self.startOfDay())
+    def initialize(self):        
+        self.schedule = ''
+        self.channels = ''
+
+        self.schedule1 = ''
+        self.channels1 = ''
+
+        
         self.player = smoothstreams.player.ChannelPlayer()
         self.player.testServers() #Test if auto server is enabled
         self.player.resetTokens() #Tokens seem to become invalid over time. Reset on startup to keep them fresh
@@ -95,7 +100,7 @@ class ViewManager(object):
         for c in self.channels:
             if number == c.get('ID'):
                 return c
-
+    
     def showEPG(self):
         util.setSetting('last_mode','EPG')
         self.window = KodiEPGDialog('script-smoothstreams-epg.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
@@ -634,16 +639,21 @@ class TimeIndicator(object):
 class KodiEPGDialog(BaseWindow,util.CronReceiver):
     def __init__(self,*args,**kwargs):
         self.manager = kwargs['manager']
+        
+        self.initSettings()
+        self._started = False
+        BaseWindow.__init__(self,*args,**kwargs)
+
+    @util.busyDialog
+    def initSettings(self):
+        self.manager.schedule = smoothstreams.Schedule()
+        self.manager.channels = self.manager.schedule.epg(self.manager.startOfDay())
+        
         self.schedule = self.manager.schedule
         self.player = self.manager.player
         self.selectionTime = 0
         self.selectionPos = -1
         self.epg = None
-        self.initSettings()
-        self._started = False
-        BaseWindow.__init__(self,*args,**kwargs)
-
-    def initSettings(self):
         if util.getSetting('key_repeat_control',False):
             self.actionHandler = ActionHandler(self._onAction)
             util.DEBUG_LOG('Key-repeat throttling: ENABLED')
@@ -724,7 +734,6 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             shown = {}
             
             categories = self.manager.createCategoryFilter()
-
             for program in programs:
                 start = program.epg.start
                 stop = program.epg.stop
@@ -733,10 +742,11 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 old = False
                 
                 #Temp fix for :15/:45 start or end of any program
-                if start % 10 != 0:
+                
+                '''if start % 10 != 0 or stop % 10 != 0:
                     start += 15
                 if duration % 10 != 0:
-                    duration += 15
+                    duration += 15'''
 
                 
                 if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
@@ -757,7 +767,6 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 
                     if gridTime in shown:
                         item.setProperty('Program_{0}_Color'.format(gridTime),program.epg.colorGIF)
-
             #Clear properties that we didn't set
             for s in gridRange:
                 if not s in shown:
@@ -953,6 +962,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         data = self.schedule.readProgramData()['data']
         channel = []
         flag = 0
+
         if program.parrentID == '0':
             for key,d in data.iteritems():
                 if not isinstance(d['events'],list):
@@ -995,7 +1005,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             channel = self.getSelectedChannel()
             self.player.play(channel)
             return
-
+        
         d, ver = self.getVersions(program)
 
         if len(ver) > 1:
@@ -1050,7 +1060,10 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 class KodiListDialog(BaseWindow,util.CronReceiver):
     def __init__(self,*args,**kwargs):
         self.manager = kwargs['manager']
-        self.categories = self.manager.schedule.categories()
+        self.manager.schedule1 = smoothstreams.Schedule(True)
+        self.manager.channels1 = self.manager.schedule1.epg(self.manager.startOfDay())
+        
+        self.categories = self.manager.schedule1.categories()
         self.category = []
         self.started = False
         self.lastHalfHour = 0
@@ -1175,7 +1188,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             self.programSelected()
 
     def categorySelected(self):
-        data = self.manager.schedule.categories(util.getSetting('show_subcategories',False))
+        data = self.manager.schedule1.categories(util.getSetting('show_subcategories',False))
         
         item = self.categoryList.getSelectedItem()
         name = item.getProperty('category')
@@ -1234,7 +1247,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         
         items.append(item)
         
-        for c in self.manager.schedule.categories(util.getSetting('show_subcategories',False)):
+        for c in self.manager.schedule1.categories(util.getSetting('show_subcategories',False)):
             item = xbmcgui.ListItem(c)
             self.category.append(c.strip('- '))
             item.setProperty('category',c.strip('- '))
@@ -1286,8 +1299,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         self.progressItems = []
         startOfDay = smoothstreams.timeutils.startOfDayLocalTimestamp()
         timeInDay = self.manager.timeInDay()
-
-        for channel in self.manager.channels:
+        for channel in self.manager.channels1:
             if not 'programs' in channel: continue
             for program in channel['programs']:
                 if not self.manager.search_key == '' and not self.manager.search_key.lower() in program.title.lower():

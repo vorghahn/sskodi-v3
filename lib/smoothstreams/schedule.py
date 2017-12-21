@@ -32,18 +32,20 @@ def htmlentitydecode(s):
 # Kodi version check for SSL
 kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.', 1)[0])
 if (kodi_version < 17):
-    JSONTVURL = 'http://fast-guide.smoothstreams.tv/feed.json'
-    JSONTVURL = 'http://fast-guide.smoothstreams.tv/feed-new-latest.zip'
+    BASE_JSONTVURL = 'http://fast-guide.smoothstreams.tv/'
 else:
-    JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed.json'
-    JSONTVURL = 'https://fast-guide.smoothstreams.tv/feed-new-latest.zip'
+    BASE_JSONTVURL = 'https://fast-guide.smoothstreams.tv/'
+
+fetch = {   'guide':'feed-new-latest.zip',
+            'guide_json':'feed-new.json',
+            'full_guide':'feed-new-full-latest.zip',
+            'full_guide_json':'feed-new-full.json'}
+
+JSONTVURL = ''           
+JSONFILE = ''
+JSONFILE_ERROR = os.path.join(util.PROFILE,"SmoothStreams.json.error")
 
 LOGOBASE = '{0}'
-
-JSONFILE = os.path.join(util.PROFILE,"feed-new.json")
-JSONFILE_ZIP = os.path.join(util.PROFILE,"feed-new-latest.zip")
-JSONFILE_ZIP_DIR = util.PROFILE
-JSONFILE_ERROR = os.path.join(util.PROFILE,"SmoothStreams.json.error")
 
 SPORTS_TABLE = { 'soccer':          {'name':'World Football',   'color':'1E9C2A'},
                  'nfl':             {'name':'American Football','color':'E85F10'},
@@ -191,7 +193,6 @@ class SSProgram(object):
         self.subcategory = None
         if 'category' in data:  # stopgap for category.
             cat = data['category'] or 'None'
-            if cat == '0': cat = 'Other Sports'
             if categories[cat]['name'] in SUBCATS:
                 self.subcategory = cat
                 cat = SUBCATS[categories[cat]['name']]
@@ -237,15 +238,25 @@ class SSProgram(object):
 # Schedule
 #==============================================================================
 class Schedule:
-    def __init__(self):
-        self.sscachejson(age=3600)
+    def __init__(self,LIST=False):
+        if util.getSetting('full_guide_switch') == 'false' or LIST == True:
+            self.sscachejson(fetch['guide'],fetch['guide_json'],age=3600)
+        else:
+            self.sscachejson(fetch['full_guide'],fetch['full_guide_json'],age=3600)
+        
         self.seenCategories = []
         self.seenSubCategories = []
         self.tempChannelStore = {}
 
     @classmethod
-    def sscachejson(cls,force=False,age=14400):
+    def sscachejson(cls,guide_zip,guide_json,force=False,age=14400):
         """Try and update the JSONTV cache."""
+        global JSONTVURL
+        JSONTVURL = os.path.join(BASE_JSONTVURL,guide_zip)
+        global JSONFILE
+        JSONFILE = os.path.join(util.PROFILE,guide_json)
+        JSONFILE_ZIP = os.path.join(util.PROFILE,guide_zip)
+        JSONFILE_ZIP_DIR = util.PROFILE
 
         util.LOG("CacheJSON: Running...")
         if (force or not os.path.isfile(JSONFILE) or (os.path.getsize(JSONFILE) < 1) or (time.time() - os.stat(JSONFILE).st_mtime > age)):  # under 1 byte or over age old (default 4 hours).
@@ -339,10 +350,11 @@ class Schedule:
             try:
                 with open(JSONFILE) as json_file:
                     return json.load(json_file)
-            except:
+            except Exception as e:
                 if first:
                     util.ERROR('Failed to read json file - re-fetching...')
-                    self.sscachejson(force=True)
+                    self.sscachejson(fetch['guide'],fetch['guide_json'],force=True,age=3600)
+                    self.sscachejson(fetch['full_guide'],fetch['full_guide_json'],force=True,age=3600)
                 else:
                     util.ERROR('Failed to read json file on second attempt - giving up')
         return None
@@ -373,7 +385,9 @@ class Schedule:
             tmp = tmp_channels[cid]
             tmp['id'] = cid
             channels.append(tmp)
-        return channels, self._readJSON().get('categories')
+        categories = self._readJSON().get('categories')
+        categories['0'] = {u'color': u'FFFFFF', u'image': '', u'name': u'No Category'}
+        return channels, categories
 
     def readProgramData(self):
         """Return a list of SSProgram objects"""
@@ -392,6 +406,7 @@ class Schedule:
             util.notify('Failed to get schedule','Please try again later')
             return []
         pid = 1
+
         for k,v in self.readProgramData().get('data').items():
             if not 'events' in v: 
                 continue
@@ -400,12 +415,18 @@ class Schedule:
             
             for key,elem in v['events'].iteritems():                
                 elem['channel'] = k
-                cat_name = str(categories[elem['category']]['name'])
+                if type(elem['category']) is int:
+                    elem['category'] = str(elem['category'])
+
+                try:    cat_name = str(categories[elem['category']]['name'])
+                except Exception as e:  continue
+                    
                 if cat_name.startswith('-'):
                     cat_name = cat_name[2:]
+
                 program = SSProgram(pid,elem,cat_name,start_of_day,categories,v['number'])
                 channel = self._getChannel(channels, program.channel)
-
+                
                 program.channelParent = channel
                 program.eventID = key
                 program.parrentID = elem['parent_id']
@@ -413,9 +434,8 @@ class Schedule:
                 programs = channel['programs']
                 try:
                     program.catgid = program.category
+                    program.color = categories[program.category]['color']
                     program.category = categories[program.category]['name']
-                    program.color = program.category['color']
-
                 except Exception as e:
                     pass
                 if not program.category in self.seenCategories: self.seenCategories.append(program.category)
