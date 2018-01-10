@@ -6,6 +6,53 @@ from lib import util, downloadregistry
 import URLDownloader
 
 class ChannelPlayer():
+    server_r0 = (
+                  {'name':util.T(30707),'host':"deu-nl3.SmoothStreams.tv"},  # EU NL3 (Ams)
+                  {'name':util.T(30706),'host':"deu-nl2.SmoothStreams.tv"},  # EU NL2 (i3d)
+                  {'name':util.T(30705),'host':"deu-nl1.SmoothStreams.tv"},  # EU NL1 (i3d)
+                  {'name':util.T(30704),'host':"deu-uk2.SmoothStreams.tv"},  # EU UK2 (100TB)
+                  {'name':util.T(30703),'host':"deu-uk1.SmoothStreams.tv"},  # EU UK1 (io)
+                  {'name':util.T(30718),'host':"deu-de.SmoothStreams.tv"},   # European DE Mix
+                  {'name':util.T(30702),'host':"deu-uk.SmoothStreams.tv"},   # European UK Mix
+                  {'name':util.T(30701),'host':"deu-nl.SmoothStreams.tv"},   # European NL Mix
+                  {'name':util.T(30700),'host':"deu.SmoothStreams.tv"},       # European Server Mix
+                  {'name':util.T(30723),'host':"dap2.SmoothStreams.tv"},      #  Asia - SG 2 (OVH
+                  {'name':util.T(30722),'host':"dap1.SmoothStreams.tv"},     #  Asia - SG 1 (SL)
+                  {'name':util.T(30717),'host':"dap.SmoothStreams.tv"}      #  Asia - Mix
+                )
+    server_r1 = ( 
+                  {'name':util.T(30723),'host':"dap2.SmoothStreams.tv"},  #  Asia - SG 2 (OVH
+                  {'name':util.T(30722),'host':"dap1.SmoothStreams.tv"},  #  Asia - SG 1 (SL)
+                  {'name':util.T(30717),'host':"dap.SmoothStreams.tv"}    #  Asia - Mix
+                )
+    server_r2 = (
+                  {'name':util.T(30700),'host':"deu.SmoothStreams.tv"},      # European Server Mix
+                  {'name':util.T(30707),'host':"deu-nl3.SmoothStreams.tv"},  # EU NL3 (Ams)
+                  {'name':util.T(30706),'host':"deu-nl2.SmoothStreams.tv"},  # EU NL2 (i3d)
+                  {'name':util.T(30705),'host':"deu-nl1.SmoothStreams.tv"},  # EU NL1 (i3d)
+                  {'name':util.T(30704),'host':"deu-uk2.SmoothStreams.tv"},  # EU UK2 (100TB)
+                  {'name':util.T(30703),'host':"deu-uk1.SmoothStreams.tv"},  # EU UK1 (io)
+                  {'name':util.T(30718),'host':"deu-de.SmoothStreams.tv"},   # European DE Mix
+                  {'name':util.T(30702),'host':"deu-uk.SmoothStreams.tv"},   # European UK Mix
+                  {'name':util.T(30701),'host':"deu-nl.SmoothStreams.tv"}    # European NL Mix
+                )
+    server_r3 = (
+                  {'name':util.T(30721),'host':"dnaw4.smoothstreams.tv"},  # US/CA West 4 (CHI)
+                  {'name':util.T(30716),'host':"dnaw2.SmoothStreams.tv"},  # US/CA West 2 (LA,CA)
+                  {'name':util.T(30720),'host':"dnaw3.SmoothStreams.tv"},  # US/CA West 3 (SJ,CA)
+                  {'name':util.T(30715),'host':"dnaw1.SmoothStreams.tv"},  # US/CA West 1 (PHX,AZ)
+                  {'name':util.T(30719),'host':"dnae6.SmoothStreams.tv"},  # US/CA East 5 (NY)
+                  {'name':util.T(30714),'host':"dnae4.SmoothStreams.tv"},  # US/CA East 4 (TOR)
+                  {'name':util.T(30713),'host':"dnae3.SmoothStreams.tv"},  # US/CA East 3 (MTL)
+                  {'name':util.T(30712),'host':"dnae2.SmoothStreams.tv"},  # US/CA East 2 (VA)
+                  {'name':util.T(30711),'host':"dnae1.SmoothStreams.tv"},  # US/CA East 1 (NJ)
+                  {'name':util.T(30710),'host':"dnaw.SmoothStreams.tv"},  # US/CA West Server Mix
+                  {'name':util.T(30709),'host':"dnae.SmoothStreams.tv"},  # US/CA East Server Mix
+                  {'name':util.T(30708),'host':"dna.SmoothStreams.tv"}  # US/CA Server Mix
+                )
+    server_r4 = server_r3
+    servers1 = {'server_r0':server_r0,'server_r1':server_r1,'server_r2':server_r2,'server_r3':server_r3,'server_r4':server_r4}
+
     servers =  ({'name':util.T(30700),'host':"deu.SmoothStreams.tv"},  # European Server Mix
                   {'name':util.T(30701),'host':"deu-nl.SmoothStreams.tv"},  # European NL Mix
                   {'name':util.T(30702),'host':"deu-uk.SmoothStreams.tv"},  # European UK Mix
@@ -18,16 +65,18 @@ class ChannelPlayer():
                   {'name':util.T(30708),'host':"dna.SmoothStreams.tv"},  # US/CA Server Mix
                   {'name':util.T(30709),'host':"dnae.SmoothStreams.tv"},  # US/CA East Server Mix
                   {'name':util.T(30710),'host':"dnaw.SmoothStreams.tv"},  # US/CA West Server Mix
-                  {'name':util.T(30711),'host':"dnae1.SmoothStreams.tv"},  # US/CA East (NJ)
-                  {'name':util.T(30712),'host':"dnae2.SmoothStreams.tv"},  # US/CA East (VA)
-                  {'name':util.T(30713),'host':"dnae3.SmoothStreams.tv"},  # US/CA East (MTL)
-                  {'name':util.T(30714),'host':"dnae4.SmoothStreams.tv"},  # US/CA East (TOR)
-                  {'name':util.T(30719),'host':"dnae6.SmoothStreams.tv"},  # US/CA East (NY)
-                  {'name':util.T(30715),'host':"dnaw1.SmoothStreams.tv"},  # US/CA West (PHX,AZ)
-                  {'name':util.T(30716),'host':"dnaw2.SmoothStreams.tv"},  # US/CA West (LA,CA)
-                  {'name':util.T(30720),'host':"dnaw3.SmoothStreams.tv"},  # US/CA West (SJ,CA)
-                  {'name':util.T(30721),'host':"dnaw4.smoothstreams.tv"},  # US/CA West (CHI)
-                  {'name':util.T(30717),'host':"dap.SmoothStreams.tv"}  #  Asia - Singapore
+                  {'name':util.T(30711),'host':"dnae1.SmoothStreams.tv"},  # US/CA East 1 (NJ)
+                  {'name':util.T(30712),'host':"dnae2.SmoothStreams.tv"},  # US/CA East 2 (VA)
+                  {'name':util.T(30713),'host':"dnae3.SmoothStreams.tv"},  # US/CA East 3 (MTL)
+                  {'name':util.T(30714),'host':"dnae4.SmoothStreams.tv"},  # US/CA East 4 (TOR)
+                  {'name':util.T(30719),'host':"dnae6.SmoothStreams.tv"},  # US/CA East 5 (NY)
+                  {'name':util.T(30715),'host':"dnaw1.SmoothStreams.tv"},  # US/CA West 1 (PHX,AZ)
+                  {'name':util.T(30716),'host':"dnaw2.SmoothStreams.tv"},  # US/CA West 2 (LA,CA)
+                  {'name':util.T(30720),'host':"dnaw3.SmoothStreams.tv"},  # US/CA West 3 (SJ,CA)
+                  {'name':util.T(30721),'host':"dnaw4.smoothstreams.tv"},  # US/CA West 4 (CHI)
+                  {'name':util.T(30717),'host':"dap.SmoothStreams.tv"},  #  Asia - Mix
+                  {'name':util.T(30722),'host':"dap1.SmoothStreams.tv"},  #  Asia - SG 1 (SL)
+                  {'name':util.T(30723),'host':"dap2.SmoothStreams.tv"}  #  Asia - SG 2 (OVH
     )
 
     # Kodi version check for SSL
@@ -194,7 +243,10 @@ class ChannelPlayer():
 
     def getChanUrl(self, chan, force_rtmp=False, for_download=False, force_hls=False):
         service = self.service
-        server = service['servers'][util.getSetting(service['servers_sett'],0)]
+        server_sett = 'server_r' + str(util.getSetting('server_region',0))
+        server = util.getSetting(server_sett)
+        server = self.servers1[server_sett][int(server)]
+        #server = service['servers'][util.getSetting(service['servers_sett'],0)]
 
         if util.getSetting("high_def",True):
             quality = "q1"  # HD - 2800k
