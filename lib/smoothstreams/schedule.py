@@ -257,7 +257,6 @@ class Schedule:
         JSONFILE = os.path.join(util.PROFILE,guide_json)
         JSONFILE_ZIP = os.path.join(util.PROFILE,guide_zip)
         JSONFILE_ZIP_DIR = util.PROFILE
-
         util.LOG("CacheJSON: Running...")
         if (force or not os.path.isfile(JSONFILE) or (os.path.getsize(JSONFILE) < 1) or (time.time() - os.stat(JSONFILE).st_mtime > age)):  # under 1 byte or over age old (default 4 hours).
             for first in (True,False):

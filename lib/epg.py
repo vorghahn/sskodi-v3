@@ -724,7 +724,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 
     def updateEPG(self):
         self.timeIndicator.update()
-        gridRange = range(-30,210,30)
+        gridRange = range(-30,210,15)
         epgStart = -30 + self.manager.displayOffset
         epgEnd = 210 + self.manager.displayOffset
 
@@ -851,7 +851,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         BaseWindow.onAction(self,action)
 
     def _onAction(self,action):
-        if action == xbmcgui.ACTION_MOVE_RIGHT:
+        '''if action == xbmcgui.ACTION_MOVE_RIGHT:
             if not self.getSelectedProgram():
                 self.moveRight()
                 self.updateInfo()
@@ -873,14 +873,13 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                     self.moveLeft()
                     self.updateInfo()
                     if temp != self.getSelectedProgram():
-                        break
-
-        '''if action == xbmcgui.ACTION_MOVE_RIGHT:
+                        break'''
+        if action == xbmcgui.ACTION_MOVE_RIGHT:
             self.moveRight()
-            self.updateInfo()
+            #self.updateInfo()
         elif action == xbmcgui.ACTION_MOVE_LEFT:
             self.moveLeft()
-            self.updateInfo()'''
+            #self.updateInfo()
 
     def getMouseHover(self,action):
         x = action.getAmount1()
@@ -944,14 +943,44 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         self.updateEPG()
 
     def moveRight(self):
-        self.selectionTime += 30
+        
+        move = 30
+        try:
+            program,grid = self.getSelectedProgram1()
+            if program:
+                duration = program.duration/60
+                selection_time = self.getProperty('selection_time')
+                if duration > 30:
+                    if grid == int(selection_time):
+                        move = duration
+                    elif grid < int(selection_time):
+                        d = int(selection_time) - grid
+                        move = duration - d
+        except:
+            pass
+        
+        self.selectionTime += move
         if self.selectionTime > 150:
             self.selectionTime = 150
             self.nextItem()
         self.updateSelection(self.selectionTime)
 
     def moveLeft(self):
-        self.selectionTime -= 30
+        move = 30
+        try:
+            program,grid = self.getSelectedProgram1()
+            if program:
+                duration = program.duration/60
+                selection_time = self.getProperty('selection_time')
+                if duration > 30:
+                    if grid == int(selection_time):
+                        move = 30
+                    elif grid < int(selection_time):
+                        move = int(selection_time) - grid + 30
+        except:
+            pass
+
+        self.selectionTime -= move
         if self.selectionTime < 0:
             self.selectionTime = 0
             self.prevItem()
@@ -1039,6 +1068,17 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
     def getSelectedChannel(self):
         idx = self.epg.getSelectedPosition()
         return self.manager.channels[idx]
+
+    def getSelectedProgram1(self):
+        idx = self.epg.getSelectedPosition()
+        if not self.manager.channels: return None
+        channel = self.manager.channels[idx]
+        if not 'programs' in channel: return None
+        for program in channel['programs']:
+            gridTime = program.epg.start - self.manager.displayOffset
+            if self.selectionTime >= gridTime and self.selectionTime < gridTime + program.epg.duration:
+                return program,gridTime
+        return None,None
 
     def getSelectedProgram(self):
         idx = self.epg.getSelectedPosition()
@@ -1175,7 +1215,8 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
 
             if self.manager.checkChannelEntry(action):
                 return
-        except:
+        except Exception as e: 
+            xbmc.log(str(e),2)
             util.ERROR()
             BaseWindow.onAction(self,action)
             return
