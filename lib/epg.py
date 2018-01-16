@@ -25,11 +25,15 @@ def versionCheck():
 #==============================================================================
 class ViewManager(object):
     def __init__(self):
+        self.valid = 1
         self.initialize()
-        self.start()
+        if self.valid == 1:
+            util.openSettings()
+        else:
+            self.start()
 
     @util.busyDialog
-    def initialize(self):        
+    def initialize(self):
         self.schedule = ''
         self.channels = ''
 
@@ -38,6 +42,16 @@ class ViewManager(object):
 
         
         self.player = smoothstreams.player.ChannelPlayer()
+        
+        #Check for valid credential
+        
+        vHash = self.player.loadHash()
+        if not vHash: vHash = self.player.getHash()
+        if 'error' in vHash:
+            xbmcgui.Dialog().ok("Validation",vHash['error'])
+            self.valid = 1
+            return
+        
         self.player.testServers() #Test if auto server is enabled
         self.player.resetTokens() #Tokens seem to become invalid over time. Reset on startup to keep them fresh
         self.setutcOffsetMinutes()
@@ -55,6 +69,7 @@ class ViewManager(object):
             self.mode = 'EPG'
         else:
             self.mode = util.getSetting('last_mode') or 'CATS'
+        self.valid = 0
 
     def start(self):
         with util.Cron(5) as self.cron:
@@ -100,10 +115,17 @@ class ViewManager(object):
         for c in self.channels:
             if number == c.get('ID'):
                 return c
-    
+
+    def changeCat(self):
+        if util.getSetting('show_all',bool) == 'true':
+            categories = ["show_30401","show_30404","show_30405","show_30408","show_30409","show_30410","show_30411","show_30412","show_30415","show_30416","show_30417","show_30418","show_30419","show_30420","show_30421"]
+            for cat in categories:
+                util.setSetting(cat,'true')
+
     def showEPG(self):
         util.setSetting('last_mode','EPG')
         self.window = KodiEPGDialog('script-smoothstreams-epg.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.changeCat()
         self.window.doModal()
         self.window.onClosed()
         del self.window
@@ -113,6 +135,7 @@ class ViewManager(object):
     def showCats(self):
         util.setSetting('last_mode','CATS')
         self.window = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.changeCat()
         self.window.doModal()
         self.window.onClosed()
         del self.window
@@ -645,21 +668,26 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         BaseWindow.__init__(self,*args,**kwargs)
 
     @util.busyDialog
-    def initSettings(self):
+    def initSettings(self,flag=1):
+        xbmc.log("Before schedule....",2)
         self.manager.schedule = smoothstreams.Schedule()
         self.manager.channels = self.manager.schedule.epg(self.manager.startOfDay())
-        
+
         self.schedule = self.manager.schedule
         self.player = self.manager.player
-        self.selectionTime = 0
-        self.selectionPos = -1
-        self.epg = None
+        if flag:
+            self.selectionTime = 0
+            self.selectionPos = -1
+            self.epg = None
         if util.getSetting('key_repeat_control',False):
             self.actionHandler = ActionHandler(self._onAction)
             util.DEBUG_LOG('Key-repeat throttling: ENABLED')
         else:
             self.actionHandler = FakeActionHandler(self._onAction)
             util.DEBUG_LOG('Key-repeat throttling: DISABLED')
+
+        if util.getSetting('full_guide_switch',True):
+            self.actionHandler = ActionHandler(self._onAction)
         self.wholePageLR = util.getSetting('scroll_lr_one_page',False)
 
     def onInit(self):
@@ -699,7 +727,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         )
 
     def updateSettings(self,state):
-        self.initSettings()
+        self.initSettings(0)
         self.setWindowProperties()
         if state != self.getSettingsState():
             self.manager.setEPGLimits()
@@ -844,8 +872,8 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 return
 
             self.getMouseHover(action)
-        except:
-            util.ERROR()
+        except Exception as e:
+            util.ERROR(str(e))
             BaseWindow.onAction(self,action)
             return
         BaseWindow.onAction(self,action)
@@ -1216,8 +1244,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             if self.manager.checkChannelEntry(action):
                 return
         except Exception as e: 
-            xbmc.log(str(e),2)
-            util.ERROR()
+            util.ERROR(str(e))
             BaseWindow.onAction(self,action)
             return
         BaseWindow.onAction(self,action)
@@ -1229,40 +1256,59 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             self.programSelected()
 
     def categorySelected(self):
-        data = self.manager.schedule1.categories(util.getSetting('show_subcategories',False))
-        
         item = self.categoryList.getSelectedItem()
         name = item.getProperty('category')
         if name == "ALL":
-            for d in range(1,len(data)+1):
+            for d in range(1,len(self.categories)):
                 i = self.categoryList.getListItem(d)
                 if item.getProperty('selected') == 'true':
                     i.setProperty('selected','false')
+                    util.setSetting(i.getProperty('id'),'false')
                 else:
                     i.setProperty('selected','true')
-                    self.category.append(i.getProperty('category'))
+                    if i.getProperty('category') not in self.category:  self.category.append(i.getProperty('category'))
+                    #util.setSetting(i.getProperty('id'),'true')
             
             if item.getProperty('selected') == 'false':
                 item.setProperty('selected','true')
+                util.setSetting(item.getProperty('id'),'true')
                 if not 'ALL' in self.category:  self.category.append('ALL')
             else:
                 item.setProperty('selected','false')
+                util.setSetting(item.getProperty('id'),'false')
                 self.category = []
             self.showPrograms()
             return
+
         stat = item.getProperty('selected')
+        
+        if str(stat) == 'false' or stat == '':
+            item.setProperty('selected','true')
+            util.setSetting(item.getProperty('id'),'true')
+        else:
+            item.setProperty('selected','false')
+            util.setSetting(item.getProperty('id'),'false')
 
-        if str(stat) == 'false' or stat == '':  item.setProperty('selected','true')
-        else:                                   item.setProperty('selected','false')
-
-        for d in range(0,len(data)+1):
+        for d in range(0,len(self.categories)):
             i = self.categoryList.getListItem(d)
             cat = i.getProperty('category')
             if i.getProperty('selected') == 'true':
                 if cat not in self.category: self.category.append(cat)
             else:
                 if cat in self.category: self.category.remove(cat)
-        
+
+        if not self.categoryCount == len(self.category):
+            i = self.categoryList.getListItem(0)
+            i.setProperty('selected','false')
+            util.setSetting(i.getProperty('id'),'falses')
+            if "ALL" in self.category: self.category.remove("ALL")
+
+        if self.categoryCount - 1 == len(self.category):
+            i = self.categoryList.getListItem(0)
+            i.setProperty('selected','true')
+            util.setSetting(i.getProperty('id'),'true')
+            if "ALL" not in self.category: self.category.append("ALL")
+
         self.showPrograms()
 
     def programSelected(self):
@@ -1280,20 +1326,46 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
 
     def fillCategories(self):
         items = []
-        item = xbmcgui.ListItem('All')
+        '''item = xbmcgui.ListItem('All')
         item.setProperty('color', util.makeColorGif('FFFFFFFF',os.path.join(util.COLOR_GIF_PATH,'{0}.gif'.format('FFFFFFFF'))))
         item.setProperty('category','ALL')
         self.category.append("ALL")
         item.setProperty('selected','true')
-        
-        items.append(item)
-        
-        for c in self.manager.schedule1.categories(util.getSetting('show_subcategories',False)):
-            item = xbmcgui.ListItem(c)
-            self.category.append(c.strip('- '))
-            item.setProperty('category',c.strip('- '))
-            item.setProperty('selected','true')
-            item.setProperty('color',self.getGifPath(c))
+        items.append(item)'''
+        xbmc.log("In create filter...",2)
+        self.categories = [
+            {"id":"show_all","name":"ALL"},
+            {"id":"show_30401","name":"American Football"},
+            {"id":"show_30404","name":"Baseball"},
+            {"id":"show_30405","name":"Basketball"},
+            {"id":"show_30408","name":"Boxing + MMA"},
+            {"id":"show_30409","name":"Cricket"},
+            {"id":"show_30410","name":"Golf"},
+            {"id":"show_30411","name":"Ice Hockey"},
+            {"id":"show_30412","name":"Motor Sports"},
+            {"id":"show_30415","name":"Olympics"},
+            {"id":"show_30416","name":"Other Sports"},
+            {"id":"show_30417","name":"Rugby"},
+            {"id":"show_30418","name":"Tennis"},
+            {"id":"show_30419","name":"TV Shows"},
+            {"id":"show_30420","name":"World Football"},
+            {"id":"show_30421","name":"Wrestling"}
+        ] 
+        self.catsub = { 'American Football':('- NCAAF','- NFL'),
+                    'Basketball':('- NBA','- NCAAB'),
+                    'Motor Sports':('- Formula 1','- Nascar'),
+                    'TV Shows':('- General TV'),
+                    }
+
+        for c in self.categories:
+            item = xbmcgui.ListItem(c['name'])
+            item.setProperty('category',c['name'])
+            stat = util.getSetting(c['id'],bool)
+            if stat == 'true':
+                self.category.append(c['name'])
+            item.setProperty('selected',stat)
+            item.setProperty('id',c['id'])
+            item.setProperty('color',self.getGifPath(c['name']))
             items.append(item)
         self.categoryList.reset()
         self.categoryList.addItems(items)
