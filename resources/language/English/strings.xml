@@ -36,6 +36,8 @@
     <string id="30218">Service</string>
     <string id="30219">Auto select server</string>
     <string id="30220">Show Now/Next in channels</string>
+    <string id="30223">Select Region</string>
+    <string id="30224">Account</string>
     <string id="30225">Server</string>
     <string id="30226">Options</string>
     <string id="30227">Start video as preview</string>
@@ -127,6 +129,13 @@
     <string id="30602">Deauthenticate IP</string>
     <string id="30603">Login failure</string>
 
+    <!-- Server Regions -->
+    <string id="30651">North America</string>
+    <string id="30652">South America</string>
+    <string id="30653">Europe</string>
+    <string id="30654">Asia</string>
+    <string id="30655">Middle East & Africa</string>
+    
     <!-- New Server Strings -->
     <string id="30700">Euro Mix</string>
     <string id="30701">Euro NL Mix</string>
@@ -149,5 +158,7 @@
     <string id="30720">NA West 2 (LA)</string>
     <string id="30716">NA West 3 (SJ)</string>
     <string id="30721">NA West 4 (CHI)</string>
-    <string id="30717">Asia (Singapore)</string>
-</strings>
+    <string id="30717">Asia Mix</string>
+    <string id="30722">Asia SG 1 (SL)</string>
+    <string id="30723">Asia SG 2 (OVH)</string>
+    </strings>

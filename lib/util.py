@@ -29,13 +29,13 @@ def ERROR(txt='',hide_tb=False,notify=False):
     if hide_tb:
         LOG('ERROR: {0} - {1}'.format(txt,short))
         return short
-    print "_________________________________________________________________________________"
+    xbmc.log("_________________________________________________________________________________",2)
     LOG('ERROR: ' + txt)
     import traceback
     tb = traceback.format_exc()
-    for l in tb.splitlines(): print '    ' + l
-    print "_________________________________________________________________________________"
-    print "`"
+    for l in tb.splitlines(): xbmc.log(str( '    ' + l),2)
+    xbmc.log("_________________________________________________________________________________",2)
+    xbmc.log("`")
     if notify: showNotification('ERROR: {0}'.format(short))
     return short
 
@@ -307,8 +307,8 @@ def durationToShortText(seconds):
 def notify(heading,message,icon=ADDON.getAddonInfo('icon'),time=5000,sound=True):
     try:
         xbmcgui.Dialog().notification(heading,message,icon,time,sound)
-    except:
-        ERROR()
+    except Exception as e:
+        ERROR(str(e))
         LOG('Pre-Gotham Notification: {0}: {1}'.format(repr(heading),repr(message)))
 
 def about():
@@ -367,8 +367,8 @@ class Cron(threading.Thread):
         for r in receivers:
             try:
                 r.tick()
-            except:
-                ERROR()
+            except Exception as e:
+                ERROR(str(e))
 
     def _halfHour(self,receivers):
         hh = self._getHalfHour()
@@ -379,9 +379,9 @@ class Cron(threading.Thread):
             for r in receivers:
                 try:
                     if not r.halfHour(): ret.append(r)
-                except:
+                except Exception as e:
                     ret.append(r)
-                    ERROR()
+                    ERROR(str(e))
             return ret
         finally:
             self._lastHalfHour = hh
@@ -392,9 +392,9 @@ class Cron(threading.Thread):
         for r in receivers:
             try:
                 if not r.day(): ret.append(r)
-            except:
+            except Exception as e:
                 ret.append(r)
-                ERROR()
+                ERROR(str(e))
         return ret
 
     def registerReceiver(self,receiver):

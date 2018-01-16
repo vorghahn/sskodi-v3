@@ -17,8 +17,8 @@ class DownloadRegistry(object):
     def __exit__(self,exc_type,exc_value,traceback):
         try:
             self.saveRegistry()
-        except:
-            util.ERROR()
+        except Exception as e:
+            util.ERROR(str(e))
 
     def __len__(self):
         return self.size()
@@ -66,8 +66,8 @@ class DownloadRegistry(object):
         try:
             with open(self._registryFile,'r') as f:
                 data = json.load(f)
-        except:
-            util.ERROR()
+        except Exception as e:
+            util.ERROR(str(e))
             self.registry = []
             return
 
