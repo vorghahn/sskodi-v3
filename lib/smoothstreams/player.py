@@ -4,6 +4,7 @@ import requests
 import xbmc, xbmcgui
 from lib import util, downloadregistry
 import URLDownloader
+from timeutils import UTCOffset
 
 class ChannelPlayer():
     server_r0 = (
@@ -197,7 +198,7 @@ class ChannelPlayer():
         if len(url) > 10:
             download_path = self.getDownloadPath()
             if download_path:
-                callback = 'RunScript(script.smoothstreams,DOWNLOAD_CALLBACK,{download})'
+                callback = 'RunScript(script.smoothstreams-v3,DOWNLOAD_CALLBACK,{download})'
                 download = URLDownloader.download(url,download_path,filename,title,int(minutes),util.getSetting('direct_record',True),callback=callback)
                 with downloadregistry.DownloadRegistry() as dr:
                     dr.add(download)
@@ -217,9 +218,11 @@ class ChannelPlayer():
         downloadPath = self.getDownloadPath()
         if not downloadPath: return
         item.targetPath = downloadPath
-        item.url = self.getChanUrl(program.channel,force_rtmp=True,for_download=True)
+        item.url = self.getChanUrl(program.channel,force_rtmp=False,for_download=True,force_hls=True)
         item.direct = util.getSetting('direct_record',True)
         item.start = program.start
+        item.offset = UTCOffset()
+        xbmc.log(str(program.start),2)
         URLDownloader.schedule(item)
         with downloadregistry.DownloadRegistry() as dr:
             dr.add(item)
@@ -335,7 +338,7 @@ class ChannelPlayer():
             self.showMessage(util.T(30600), util.T(30603))
 
         util.LOG("Login failure: " + repr(result))
-        return None
+        return result
 
     def login(self):
         credentials = {'hash':None, 'user':None, 'password':None}
