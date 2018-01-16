@@ -425,7 +425,7 @@ class Schedule:
 
                 program = SSProgram(pid,elem,cat_name,start_of_day,categories,v['number'])
                 channel = self._getChannel(channels, program.channel)
-                
+
                 program.channelParent = channel
                 program.eventID = key
                 program.parrentID = elem['parent_id']
