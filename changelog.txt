@@ -3,8 +3,16 @@ You should update to 17 if possible, as functionality may break going forward.
 
 ChangeLog: Version (YYYY-MM-DD)
 
-Upcomming/Known issues:
-Favourite List
+Upcoming/Known issues:
+Favorite List
+
+** 3.1.8  (2017-02-21) **
+Modern Theme enabled (To change to Modern Theme Go to : Settings->Option Visual-> Enable Modern Theme)
+Views is moved to settings-> Options Visual section
+
+** 3.1.7  (2017-01-16) **
+[Changed]: In settings menu emum is changed to select (for server and region)
+[FIXED]: need to exit addon and re-enter to get full EPG showing
 
 ** 3.1.6  (2017-01-10) **
 User validation before entering to GUIDE/EPG
