@@ -39,9 +39,10 @@
     <string id="30223">Select Region</string>
     <string id="30224">Account</string>
     <string id="30225">Server</string>
-    <string id="30226">Options</string>
+    <string id="30226">Options General</string>
     <string id="30227">Start video as preview</string>
     <string id="30234">Show version options when selecting a program</string>
+    <string id="30235">Options Visual</string>
 
     <string id="30300">Auto</string>
     <string id="30301">GMT+0</string>

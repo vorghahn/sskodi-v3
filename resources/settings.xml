@@ -3,7 +3,7 @@
 
   <!-- Account -->
   <category label="30224">
-    <setting id="service" type="enum" label="30218" lvalues="30328|30330|30332|30335" default="0" />
+    <setting id="service" type="select" label="30218" lvalues="30328|30330|30332|30335" default="0" />
     <setting id="username" type="text" label="30201" default="" />
     <setting id="user_password" type="text" option="hidden" label="30202" enable="!eq(-1,)" default="" />
   </category>
@@ -11,25 +11,31 @@
   <category label="30225">
     <!--<setting id="auto_server" type="bool" label="30219" default="false" />-->
     <!--enable="eq(-1,false)"-->
-    <setting id="server_region" type="enum" label="30223" lvalues="30655|30654|30653|30652|30651" default="0" />
+    <setting id="server_region" type="select" label="30223" values= "North America|South America|Europe|Asia|Middle East & Africa" lvalues="30651|30652|30653|30654|30655" default="0" />
     <!--North America-->
-    <setting id="server_r4" type="enum" label="30204" visible="eq(-1,4)" lvalues="30721|30716|30720|30715|30719|30714|30713|30712|30711|30710|30709|30708" default="0" />
+    <setting id="server_r0" type="select" label="30204" visible="eq(-1,North America)" lvalues="30708|30709|30710|30711|30712|30713|30714|30719|30715|30720|30716|30721" default="0" />
     <!--South America-->
-    <setting id="server_r3" type="enum" label="30204" visible="eq(-2,3)" lvalues="30721|30716|30720|30715|30719|30714|30713|30712|30711|30710|30709|30708" default="0" />
+    <setting id="server_r1" type="select" label="30204" visible="eq(-2,South America)" lvalues="30708|30709|30710|30711|30712|30713|30714|30719|30715|30720|30716|30721" default="0" />
     <!--Europe-->
-    <setting id="server_r2" type="enum" label="30204" visible="eq(-3,2)" lvalues="30707|30706|30705|30704|30703|30718|30702|30701|30700" default="0" />
+    <setting id="server_r2" type="select" label="30204" visible="eq(-3,Europe)" lvalues="30700|30701|30702|30718|30703|30704|30705|30706|30707" default="0" />
     <!--Asia-->
-    <setting id="server_r1" type="enum" label="30204" visible="eq(-4,1)" lvalues="30723|30722|30717" default="0" />
+    <setting id="server_r3" type="select" label="30204" visible="eq(-4,Asia)" lvalues="30717|30722|30723" default="0" />
     <!--Middle East & Africa-->
-    <setting id="server_r0" type="enum" label="30204" visible="eq(-5,0)" lvalues="30707|30706|30705|30704|30703|30718|30702|30701|30700|30723|30722|30717" default="0" />
+    <setting id="server_r4" type="select" label="30204" visible="eq(-5,Middle East & Africa)" lvalues="30717|30722|30723|30700|30701|30702|30718|30703|30704|30705|30706|30707" default="0" />
     <setting id="server_type" type="enum" label="30205" lvalues="30213|30214" default="0"  />
   </category>
   <!--Options-->
   <category label="30226">
-    <setting id="12_hour_times" type="bool" label="12H Time Format" default="false" />
     <setting id="full_guide_switch" type="bool" label="Full Guide/EPG ON/OFF ?" default="false" />
     <setting id="high_def" type="bool" label="30203" default="true" />
     <setting id="auto_advance" type="bool" label="Auto advance schedule" default="true" />
+  </category>
+  <!--Option Visual-->
+  <category label="30235">
+    <setting id="theme" type="bool" label="Enable Modern Theme" default="false" />
+    <setting id="mode" type="select" label="Change Skin Mode" values="List|EPG" default="List" visible="eq(-1,false)"/>
+    <setting id="mode" type="select" label="Change Skin Mode" values="List|EPG|Panel" default="List" visible="eq(-2,true)"/>
+    <setting id="12_hour_times" type="bool" label="12H Time Format" default="false" />
     <setting id="show_video_preview" type="bool" label="Show video preview" default="true" />
     <setting id="disable_list_view_preview" subsetting="true" type="bool" label="Disable in list view" default="false" enable="eq(-1,true)" />
     <setting id="start_video_preview" subsetting="true" type="bool" label="30227" default="false" enable="eq(-2,true)" />
@@ -81,10 +87,10 @@
     <setting id="fullscreen_overlay" type="bool" label="Enable fullscreen video overlay" default="false" />
     <setting id="seek_protection" type="bool" subsetting="true" label="(Experimental/WIP) Enable Gotham seek protection" default="false" enable="eq(-1,true)" />
     <setting id="show_tweets" type="bool" label="(Experimental/WIP) Show latest SmoothStreams tweet (EPG)" default="false" />
-    <setting id="reset_schedule_action" label="Troubleshoot: Re-fetch schedule" type="action" action='xbmc.RunScript(script.smoothstreams,REFRESH_SCHEDULE)' />
+    <setting id="reset_schedule_action" label="Troubleshoot: Re-fetch schedule" type="action" action='xbmc.RunScript(script.smoothstreams-v3,REFRESH_SCHEDULE)' />
     <setting id="ask_version" type="bool" label="30234" default="true" />
     <setting id="debug" type="bool" label="30217" default="false" />
-    <setting id="about_action" label="About" type="action" action='xbmc.RunScript(script.smoothstreams,ABOUT)' />
+    <setting id="about_action" label="About" type="action" action='xbmc.RunScript(script.smoothstreams-v3,ABOUT)' />
   </category>
   <!--Recording-->
   <category label="30334">
