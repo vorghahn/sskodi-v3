@@ -20,9 +20,13 @@ if __name__ == '__main__':
             os.remove(hashFile)
         from lib.smoothstreams import player
         player.ChannelPlayer().login()
-        hash = util.getSetting('SHash_0')
+        try:
+            hash = util.getSetting('SHash_0')
+        except:
+            hash = util.getSetting('SHash_1')
         with open(hashFile,'w') as f:
-            f.write(hash)
+
+            f.write(str(hash))
     else:
         from ssmain import main
         main()

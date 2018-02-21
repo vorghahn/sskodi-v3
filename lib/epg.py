@@ -1,3 +1,4 @@
+
 import xbmc, xbmcgui
 import os
 import datetime
@@ -39,18 +40,21 @@ class ViewManager(object):
 
         self.schedule1 = ''
         self.channels1 = ''
-
-        
         self.player = smoothstreams.player.ChannelPlayer()
         
         #Check for valid credential
-        
+        #If user has entered wrong credential then, login will be failed
         vHash = self.player.loadHash()
         if not vHash: vHash = self.player.getHash()
         if 'error' in vHash:
             xbmcgui.Dialog().ok("Validation",vHash['error'])
             self.valid = 1
             return
+        
+        if util.getSetting('theme') == 'true':
+            self.theme = 'modern'
+        else:
+            self.theme = 'classic'
         
         self.player.testServers() #Test if auto server is enabled
         self.player.resetTokens() #Tokens seem to become invalid over time. Reset on startup to keep them fresh
@@ -63,10 +67,15 @@ class ViewManager(object):
         self.mode = None
         self.cron = None
         self.search_key = ''
-        if util.getSetting('default_mode',0) == 1:
+        if util.getSetting('mode') == 'List':
             self.mode = 'CATS'
-        elif util.getSetting('default_mode',0) == 2:
+        elif util.getSetting('mode') == 'EPG':
             self.mode = 'EPG'
+        elif util.getSetting('mode') == 'Panel':
+            self.mode = 'PANEL'
+            if util.getSetting('theme') == 'false':
+                util.setSetting('mode', 'List')
+                self.mode = 'CATS'
         else:
             self.mode = util.getSetting('last_mode') or 'CATS'
         self.valid = 0
@@ -79,8 +88,10 @@ class ViewManager(object):
         while self.mode:
             if self.mode == 'EPG':
                 self.showEPG()
-            else:
+            elif self.mode == 'CATS':
                 self.showCats()
+            else:
+                self.showPanel()
         util.DEBUG_LOG('EXIT')
 
     def switch(self,mode):
@@ -124,17 +135,26 @@ class ViewManager(object):
 
     def showEPG(self):
         util.setSetting('last_mode','EPG')
-        self.window = KodiEPGDialog('script-smoothstreams-epg.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.window = KodiEPGDialog('script-smoothstreams-epg.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
         self.changeCat()
         self.window.doModal()
         self.window.onClosed()
         del self.window
         self.window = None
-        util.DEBUG_LOG('EPG Done')
 
     def showCats(self):
         util.setSetting('last_mode','CATS')
-        self.window = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.window = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
+        self.changeCat()
+        self.window.doModal()
+        self.window.onClosed()
+        del self.window
+        self.window = None
+        util.DEBUG_LOG('List Done')
+
+    def showPanel(self):
+        util.setSetting('last_mode','PANEL')
+        self.window = KodiListDialog('script-smoothstreams-panel.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
         self.changeCat()
         self.window.doModal()
         self.window.onClosed()
@@ -231,12 +251,9 @@ class ViewManager(object):
         if not self.search_key == '':
             return
 
-        if util.getSetting('last_mode') == 'EPG':
-            d.addItem('categories','View->[B]List[/B]')
-        else:
-            d.addItem('epg','View->[B]EPG[/B]')
         d.addItem('play_channel','Play Channel')
         d.addItem('search_event','Search by keyword...')
+        #d.addItem('favourite','Favourite')
         if show_download:
             if item._ssType == 'PROGRAM':
                 if item.isAiring():
@@ -268,21 +285,55 @@ class ViewManager(object):
             self.player.stopDownload()
         elif selection == 'view_recordings':
             self.viewRecordings()
-        elif selection == 'categories':
+        elif selection == 'cat':
             self.switch('CATS')
         elif selection == 'epg':
             self.switch('EPG')
+        elif selection == 'panel':
+            self.switch('PANEL')
         elif selection == 'play_channel':
             self.playChannel()
         elif selection == 'settings':
             self.showSettings()
         elif selection == 'fullscreen':
             xbmc.executebuiltin('Action(FullScreen)')
+        elif selection == 'modern' or selection == 'classic':
+            self.changeTheme(selection)
+        elif selection == 'changeView':
+            self.changeView(selection)
         elif selection == 'exit':
             self.mode = None
             self.window.close()
             if util.getSetting('fullscreen_on_exit',True): self.fullscreenVideo()
 
+    def changeView(self,view):
+        dialog = util.xbmcDialogSelect('Change View')
+        last_view = util.getSetting('last_mode')
+        dialog.addItem('cat','List')
+        dialog.addItem('epg','EPG')
+        if util.getSetting('theme') == 'modern':
+            dialog.addItem('panel','PANEL')
+        result = dialog.getResult()
+        
+        if result == 'cat':
+            self.switch('CATS')
+        elif result == 'epg':
+            self.switch('EPG')
+        elif result == 'panel':
+            self.switch('PANEL')
+        return
+    def changeTheme(self,theme):
+        self.theme = theme
+        util.setSetting('theme',theme)
+        xbmc.log(str(util.getSetting('last_mode')),2)
+        xbmc.log(str(theme),2)
+        if theme == 'classic' and util.getSetting('last_mode') == 'PANEL':
+            util.setSetting('last_mode','CATS')
+            self.mode = 'CATS'
+        self.window.doClose()
+        self.mode=None
+        #xbmc.executebuiltin("xbmc.RunScript(script.smoothstreams-v3)")
+        return
     def search(self):
         keyword = xbmcgui.Dialog().input('Enter search keyword')
         if not keyword:
@@ -303,6 +354,10 @@ class ViewManager(object):
         old12HourTimes = util.getSetting('12_hour_times',False)
         oldLoginPass = (util.getSetting('service',0),util.getSetting('username'),util.getSetting('user_password'))
         state = self.window.getSettingsState()
+        oldFULLEPG = util.getSetting('full_guide_switch',False)
+        
+        oldTheme = util.getSetting('theme',False)
+        oldMode = util.getSetting('mode')
 
         util.openSettings()
 
@@ -317,6 +372,21 @@ class ViewManager(object):
 
         self.window.updateSettings(state)
 
+        if oldFULLEPG != util.getSetting('full_guide_switch',False):
+            self.window.updateEPG()
+
+        if oldTheme != util.getSetting('theme',False):
+            xbmc.log("Change Theme.....",2)
+            self.mode=None
+            self.window.close()
+            xbmcgui.Dialog().ok("Restart SmoothStreams","Theme has been changed, please restart the addon to take effect.")
+            return
+        if oldMode != util.getSetting('mode'):
+            xbmc.log("Change Mode.....",2)
+            modes = {'List':'CATS','EPG':'EPG','Panel':'PANEL'}
+            self.switch(modes[util.getSetting('mode')])
+            return
+        
     def getSelectedProgramOrChannel(self):
         return self.window.getSelectedProgram() or self.window.getSelectedChannel()
 
@@ -669,9 +739,10 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
 
     @util.busyDialog
     def initSettings(self,flag=1):
-        xbmc.log("Before schedule....",2)
         self.manager.schedule = smoothstreams.Schedule()
-        self.manager.channels = self.manager.schedule.epg(self.manager.startOfDay())
+
+        data = self.manager.schedule.epg(self.manager.startOfDay())
+        self.manager.channels = data
 
         self.schedule = self.manager.schedule
         self.player = self.manager.player
@@ -703,21 +774,21 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         self.initChannels()
         self.updateEPG()
         self.updateSelection(self.selectionTime)
-        self.showTweet()
+        #self.showTweet()
         self.manager.cron.registerReceiver(self)
 
     def setWindowProperties(self):
-        self.setProperty('version','v{0}'.format(util.ADDON.getAddonInfo('version')))
+        #self.setProperty('version','v{0}'.format(util.ADDON.getAddonInfo('version')))
         self.setProperty('hide_video_preview', not util.getSetting('show_video_preview',True) and '1' or '')
 
-    def showTweet(self):
+    '''def showTweet(self):
         if not util.getSetting('show_tweets',False): return
         import twitter
         sstwit = twitter.SSTwitterFeed()
         tweet = sstwit.getLatestTweet(True)
         if tweet:
             self.setProperty('message',tweet)
-            #xbmcgui.Dialog().ok('News',tweet)
+            #xbmcgui.Dialog().ok('News',tweet)'''
 
     def getSettingsState(self):
         return (    util.getSetting('12_hour_times',False),
@@ -746,6 +817,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         for channel in self.manager.channels:
             item = xbmcgui.ListItem(channel['display-name'],str(channel['ID']),iconImage=channel['logo'])
             items.append(item)
+
         self.epg.reset()
         self.epg.addItems(items)
         self.setFocusId(101)
@@ -780,7 +852,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
 
                     gridTime = start - self.manager.displayOffset
-
+                    
                     if start >= epgStart and start < epgEnd:
                         shown[gridTime] = True
                         item.setProperty('Program_{0}_Duration'.format(gridTime),str(duration))
@@ -938,6 +1010,9 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.setProperty('program_title',p.title)
             self.setProperty('program_description',p.description)
             self.setProperty('program_times',p.epg.timeDisplay)
+            self.setProperty('program_times1',p.epg.timeDisplay.split('(')[0])
+            self.setProperty('program_duration',p.epg.timeDisplay.split('(')[1][0:-1])
+            
             self.setProperty('program_quality',p.epg.quality)
             xbmcSelect, ver = self.getVersions(p)
             self.setProperty('program_versions','[CR]'.join(ver))
@@ -947,6 +1022,8 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.setProperty('program_title','')
             self.setProperty('program_description','')
             self.setProperty('program_times','')
+            self.setProperty('program_times1','')
+            self.setProperty('program_duration','')
             self.setProperty('program_quality','')
             self.setProperty('program_versions','')
             self.setProperty('program_category','')
@@ -1179,7 +1256,10 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
             program = item.dataSource
             prog = ((timeInDay - program.epg.start)/float(program.epg.duration))*100
             prog = int(prog - (prog % 5))
-            tex = 'progress/script-smoothstreams-progress_{0}.png'.format(prog)
+            if util.getSetting('last_mode') == 'PANEL':
+                tex = 'progress_line/{0}.png'.format(prog)
+            else:
+                tex = 'progress_circle/{0}.png'.format(prog)
             item.setProperty('playing',tex)
 
     def updateProgramItems(self):
@@ -1267,7 +1347,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                 else:
                     i.setProperty('selected','true')
                     if i.getProperty('category') not in self.category:  self.category.append(i.getProperty('category'))
-                    #util.setSetting(i.getProperty('id'),'true')
+                    util.setSetting(i.getProperty('id'),'true')
             
             if item.getProperty('selected') == 'false':
                 item.setProperty('selected','true')
@@ -1300,7 +1380,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         if not self.categoryCount == len(self.category):
             i = self.categoryList.getListItem(0)
             i.setProperty('selected','false')
-            util.setSetting(i.getProperty('id'),'falses')
+            util.setSetting(i.getProperty('id'),'false')
             if "ALL" in self.category: self.category.remove("ALL")
 
         if self.categoryCount - 1 == len(self.category):
@@ -1332,7 +1412,6 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         self.category.append("ALL")
         item.setProperty('selected','true')
         items.append(item)'''
-        xbmc.log("In create filter...",2)
         self.categories = [
             {"id":"show_all","name":"ALL"},
             {"id":"show_30401","name":"American Football"},
@@ -1396,7 +1475,10 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
         elif start <= timeInDay:
             prog = ((timeInDay - start)/float(program.epg.duration))*100
             prog = int(prog - (prog % 5))
-            tex = 'progress/script-smoothstreams-progress_{0}.png'.format(prog)
+            if util.getSetting('last_mode') == 'PANEL':
+                tex = 'progress_line/{0}.png'.format(prog)
+            else:
+                tex = 'progress_circle/{0}.png'.format(prog)
             item.setProperty('playing',tex)
             self.progressItems.append(item)
         item.setProperty('sort',str(sort))
@@ -1430,17 +1512,19 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                     if util.getSetting('12_hour_times') == 'true':
                         if len(str(timeDisp).split(' ')) > 2:
                             t = str(timeDisp).split(' ',1)[1]
-                            disp_time = str(str(dt).split(' ',1)[0].split('-',1)[1]) + '   : ' + str(t)
+                            temp = dt.strftime('%b %d')
+                            disp_time = str(temp) + ', ' + str(t)
                         else:
                             t = str(timeDisp)
-                            disp_time = 'Today : ' + t
+                            disp_time = 'Today, ' + t
                     else:
                         if len(str(timeDisp).split(' ')) > 1:
                             t = str(timeDisp).split(' ',1)[1]
-                            disp_time = str(str(dt).split(' ',1)[0].split('-',1)[1]) + '   : ' + str(t)
+                            temp = dt.strftime('%b %d')
+                            disp_time = str(temp) + ', ' + str(t)
                         else:
                             t = str(timeDisp)
-                            disp_time = 'Today : ' + t
+                            disp_time = 'Today, ' + t
                     item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['logo'],data_source=program)
                     sort = (((start * 1440) + stop ) * 100) + program.channel
                     if stop <= timeInDay:
@@ -1449,7 +1533,10 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                     elif start <= timeInDay:
                         prog = ((timeInDay - start)/float(program.epg.duration))*100
                         prog = int(prog - (prog % 5))
-                        tex = 'progress/script-smoothstreams-progress_{0}.png'.format(prog)
+                        if util.getSetting('last_mode') == 'PANEL':
+                            tex = 'progress_line/{0}.png'.format(prog)
+                        else:
+                            tex = 'progress_circle/{0}.png'.format(prog)
                         item.setProperty('playing',tex)
                         self.progressItems.append(item)
                     item.setProperty('sort',str(sort))

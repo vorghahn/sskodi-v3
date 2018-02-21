@@ -140,9 +140,9 @@ class SSProgram(object):
         def update(self):
             if self.program.quality:
                 if 'HD' in self.program.quality:
-                    self.quality = 'script-smoothstreams-hd_720p.png'
+                    self.quality = 'hd.png'
                 elif 'HQLQ' in self.program.quality:
-                    self.quality = 'script-smoothstreams-HQ.png'
+                    self.quality = 'hq.png'
             self.versions = '[CR]'.join(self.program.versions)
 
             localTZ = timeutils.LOCAL_TIMEZONE
@@ -360,9 +360,9 @@ class Schedule:
 
     def readChannels(self):
         """Read all channels in the file."""
-
+        
         tree = self._readJSON().get('data')
-
+    
         if not tree: return None
         # container for output.
         tmp_channels = {}
@@ -377,7 +377,7 @@ class Schedule:
         #Sort channel according to its id
         def getKey(item):
             return int(tmp_channels[item]['ID'])
-
+    
         tmp_tmp_channels = sorted(tmp_channels, key=getKey)
         
         for cid in tmp_tmp_channels:
@@ -386,6 +386,7 @@ class Schedule:
             channels.append(tmp)
         categories = self._readJSON().get('categories')
         categories['0'] = {u'color': u'FFFFFF', u'image': '', u'name': u'No Category'}
+        
         return channels, categories
 
     def readProgramData(self):
