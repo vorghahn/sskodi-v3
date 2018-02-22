@@ -59,6 +59,7 @@ class ViewManager(object):
         self.player.testServers() #Test if auto server is enabled
         self.player.resetTokens() #Tokens seem to become invalid over time. Reset on startup to keep them fresh
         self.setutcOffsetMinutes()
+        self.createFav()
         util.DEBUG_LOG('Timezone: {0}'.format(smoothstreams.timeutils.LOCAL_TIMEZONE))
         self.initDisplayOffset()
         self.initChannels()
@@ -103,6 +104,7 @@ class ViewManager(object):
         self.window.timerCallback()
 
     def reloadChannels(self,force=False):
+        pass
         if self.schedule.sscachejson(force):
             self.updateChannels()
 
@@ -163,7 +165,7 @@ class ViewManager(object):
         util.DEBUG_LOG('List Done')
 
     def doChannelEntry(self,digit):
-        window = KodiChannelEntry('script-smoothstreams-channel_entry.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self,digit=digit)
+        window = KodiChannelEntry('script-smoothstreams-channel_entry.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self,digit=digit)
         window.doModal()
         ret = None
         if window.set:
@@ -253,7 +255,7 @@ class ViewManager(object):
 
         d.addItem('play_channel','Play Channel')
         d.addItem('search_event','Search by keyword...')
-        #d.addItem('favourite','Favourite')
+        d.addItem('favourite','Favourite')
         if show_download:
             if item._ssType == 'PROGRAM':
                 if item.isAiring():
@@ -295,6 +297,8 @@ class ViewManager(object):
             self.playChannel()
         elif selection == 'settings':
             self.showSettings()
+        elif selection == 'favourite':
+            self.favourite()
         elif selection == 'fullscreen':
             xbmc.executebuiltin('Action(FullScreen)')
         elif selection == 'modern' or selection == 'classic':
@@ -322,6 +326,7 @@ class ViewManager(object):
         elif result == 'panel':
             self.switch('PANEL')
         return
+
     def changeTheme(self,theme):
         self.theme = theme
         util.setSetting('theme',theme)
@@ -334,13 +339,130 @@ class ViewManager(object):
         self.mode=None
         #xbmc.executebuiltin("xbmc.RunScript(script.smoothstreams-v3)")
         return
+
+    def createFav(self,name='Default'):
+        profile_file = os.path.join(util.PROFILE,'favourite')
+        profile_name = os.path.join(util.PROFILE,name)
+        default_profile = "show_all:true,show_30401:true,show_30402:true,show_30403:true,show_30404:true,show_30405:true,show_30406:true,show_30407:true,show_30408:true,show_30409:true,show_30410:true,show_30411:true,show_30412:true,show_30413:true,show_30414:true,show_30415:true,show_30416:true,show_30417:true,show_30418:true,show_30419:true,show_30420:true,show_30421:true"
+
+        if not os.path.exists(profile_name):
+            with open(profile_file,'a') as fav:
+                fav.write(name + ',')
+
+            with open(profile_name, 'w') as new_fav:
+                new_fav.write(default_profile)
+            util.notify('Favourite List', name + ' list created')
+            if name == 'Default':
+                util.setSetting('favourite',name)
+            return
+        if not name == 'Default':
+            util.notify('Favourite List', name + ' list exists')
+
+    def deleteFav(self, dialog=None):
+        if not dialog:  return
+        profile_file = os.path.join(util.PROFILE,'favourite')
+
+        favList = self.listFav(dialog,1)
+        for fav in favList:
+            if not fav == 'Default':
+                dialog.addItem(fav,fav)
+
+        result = dialog.getResult()
+        if result:
+            if result == util.getSetting('favourite'):
+                self.switchFav('Default')
+            favList.remove(result)
+            with open(profile_file,'w') as favFile:
+                favFile.write(','.join(favList) + ',')
+            del_profile = os.path.join(util.PROFILE, result)
+            xbmc.log(str(del_profile),2)
+            os.remove(del_profile)
+            util.notify('Favourite List', result + ' list deleted')
+
+    def listFav(self,dialog=None,getList=0):
+        if not dialog:  return
+        profile_file = os.path.join(util.PROFILE,'favourite')
+        
+        with open(profile_file,'r') as fp:
+            favList = fp.read().split(',')[0:-1]
+        
+        if favList:
+            if getList: return favList
+            active_fav = util.getSetting('favourite')
+            for fav in favList:
+                if not fav: continue
+                value = fav
+                if fav == active_fav:   fav = '[COLOR orange][B]' + fav + '[/B][/COLOR]'
+                
+                dialog.addItem(value,fav)
+        dialog.addItem('create_favourite','[COLOR blue]Create Favourite List[/COLOR]')
+        dialog.addItem('delete_favourite','[COLOR red]Delete Favourite List[/COLOR]')
+    
+    def switchFav(self,result):
+        default_profile = "show_all:true,show_30401:true,show_30402:true,show_30403:true,show_30404:true,show_30405:true,show_30406:true,show_30407:true,show_30408:true,show_30409:true,show_30410:true,show_30411:true,show_30412:true,show_30413:true,show_30414:true,show_30415:true,show_30416:true,show_30417:true,show_30418:true,show_30419:true,show_30420:true,show_30421:true"
+
+        if not util.getSetting('favourite') == result:
+            current_profile_data = ""
+            current_profile_file = os.path.join(util.PROFILE,util.getSetting('favourite'))
+            for set in default_profile.split(','):
+                val = util.getSetting(set.split(':')[0])
+                current_profile_data += set.split(':')[0] +":"+val + ","
+
+            #Write existing settings to previous profile file
+            with open(current_profile_file, 'w') as c_p_f:
+                c_p_f.write(current_profile_data[0:-1])                    
+
+            util.setSetting('favourite',result)
+            current_profile_file = os.path.join(util.PROFILE,util.getSetting('favourite'))
+            #Generate new setting from selected profile file
+            with open(current_profile_file, 'r') as c_p_f:
+                data = c_p_f.read()
+            
+            category = []
+            for set in data.split(','):
+                util.setSetting(set.split(':')[0],set.split(':')[1])
+                xbmc.log(str(set),2)
+                if set.split(':')[1] == 'true':
+                    xbmc.log("in if...",2)
+                    data = [d['name'] for d in self.window.categories if d['id'] == set.split(':')[0]]
+                    xbmc.log(str(data),2)
+                    if data:    category.append(data[0])
+            xbmc.log(str(category),2)
+            self.window.category=category
+            #Enable new list
+            util.notify('Favourite List', result + ' list enabled.')
+            self.window.fillCategories()
+            self.window.showList()
+            
+        else:
+            util.notify('Favourite List', result + ' is already enabled.')
+    def favourite(self):
+        favList = []
+        dialog = util.xbmcDialogSelect('Manage Favourite')
+        self.listFav(dialog)
+        result = dialog.getResult()
+        
+        if result == 'create_favourite':
+            keyword = xbmcgui.Dialog().input('Enter Favourite List Name')
+            if not keyword: return
+            #Create fresh profile for favourite
+            self.createFav(keyword)
+
+        elif result == 'delete_favourite':
+            deldialog = util.xbmcDialogSelect('Delete Favourite')
+            self.deleteFav(deldialog)
+
+        elif result:
+            if xbmcgui.Dialog().yesno('Favourite List','Do you want to enable ' + result + ' profile?'):
+                self.switchFav(result)
+
     def search(self):
         keyword = xbmcgui.Dialog().input('Enter search keyword')
         if not keyword:
             return
         self.search_key = keyword
 
-        self.window_search = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+        self.window_search = KodiListDialog('script-smoothstreams-category.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
         self.window_search.doModal()
         self.window_search.onClosed()
         del self.window_search
@@ -556,9 +678,9 @@ class ViewManager(object):
         if not util.getSetting('fullscreen_overlay',False): return
         if util.getSetting('seek_protection',False):
             with util.KeymapOverride():
-                overlay = SeekProtectionOverlayDialog('script-smoothstreams-overlay.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+                overlay = SeekProtectionOverlayDialog('script-smoothstreams-overlay.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
         else:
-            overlay = OverlayDialog('script-smoothstreams-overlay.xml',util.ADDON.getAddonInfo('path'),'Main','720p',manager=self)
+            overlay = OverlayDialog('script-smoothstreams-overlay.xml',util.ADDON.getAddonInfo('path'),self.theme,'720p',manager=self)
 
         overlay.doModal()
         del overlay
