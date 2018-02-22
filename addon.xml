@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.1.8"
+       version="3.1.9"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -17,7 +17,11 @@
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
         <news>Upcoming/Known issues:
-            - Favorite List
+v3.1.9  (2017-02-22)
+            - Favorite List for category selection
+            [To create Favorite profile : Go to Favorite: Create Favorite -> Here one can specify name
+             To Enable Favorite profile : Go to Favorite: Click on profile which you want to enable
+             To Delete Favorite profile : Go to Favorite: Delete Favorite -> Click on profile to be deleted]
 v3.1.8  (2017-02-21)
             - Modern Theme enabled (To change to Modern Theme Go to : Settings->Option Visual-> Enable Modern Theme)
             - Views is moved to settings-> Options Visual section
