@@ -5,6 +5,9 @@ ChangeLog: Version (YYYY-MM-DD)
 
 Upcoming/Known issues:
 
+** v3.2.0  (2017-03-20) **
+- [Fixed] Download functionality
+
 ** v3.1.9  (2017-02-22) **
 - Favorite List for category selection
 [To create Favorite profile : Go to Favorite: Create Favorite -> Here one can specify name
