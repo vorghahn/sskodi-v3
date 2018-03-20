@@ -177,12 +177,12 @@ class ChannelPlayer():
             program = item.currentProgram()
 
         if program and program.isAiring():
-            url = self.getChanUrl(program.channel,force_rtmp=True,for_download=True)
+            url = self.getChanUrl(program.channel,force_rtmp=False,for_download=True)
             duration = program.minutesLeft()
             title = program.title + time.strftime(' - %H:%M:%S'.format(util.TIME_DISPLAY),time.localtime())
         else:
             if program: item = item.channelParent #Selected program but it is not airing, use channel info
-            url = self.getChanUrl(item['id'],force_rtmp=True,for_download=True)
+            url = self.getChanUrl(item['id'],force_rtmp=False,for_download=True)
             title = item['display-name'] + time.strftime(' - %b %d {0}'.format(util.TIME_DISPLAY),time.localtime())
 
         filename = self.getFilename(title)
@@ -261,6 +261,25 @@ class ChannelPlayer():
 
         credentials = self.login()
         if not credentials: return
+
+        if for_download:
+            util.LOG('Using {0}'.format(service['name']))
+            # Kodi version check for SSL
+            kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.', 1)[0])
+            if (kodi_version < 17):
+                chan_template = 'http://{server}:{port}/{site}/ch{channel:02d}{quality}.stream/playlist.m3u8?wmsAuthSign={hash}'
+            else:
+                chan_template = 'https://{server}:{port}/{site}/ch{channel:02d}{quality}.stream/playlist.m3u8?wmsAuthSign={hash}'
+
+            url = chan_template.format(
+                server=server['host'],
+                port=server.get('port', service['hls_port']),
+                site=service['site'],
+                channel=chan,
+                quality=quality,
+                **credentials
+            )
+            return url
 
         if not force_hls and (force_rtmp or util.getSetting("server_type",0) == 0): # and not server.get('temp_force_hls'):
             util.LOG('Using {0}'.format(service['name']))

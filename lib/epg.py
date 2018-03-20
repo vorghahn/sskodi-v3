@@ -104,7 +104,7 @@ class ViewManager(object):
         self.window.timerCallback()
 
     def reloadChannels(self,force=False):
-        pass
+        return
         if self.schedule.sscachejson(force):
             self.updateChannels()
 
@@ -489,10 +489,10 @@ class ViewManager(object):
         self.setEPGLimits()
         settingsOffsetHours = util.getSetting('gmt_offset',0)
         if gmtOffsetOld != settingsOffsetHours or old12HourTimes != util.getSetting('12_hour_times',False):
-            self.setutcOffsetMinutes()
-            self.updateChannels()
+            #self.setutcOffsetMinutes()
+            #self.updateChannels()
 
-        self.window.updateSettings(state)
+            self.window.updateSettings(state)
 
         if oldFULLEPG != util.getSetting('full_guide_switch',False):
             self.window.updateEPG()
