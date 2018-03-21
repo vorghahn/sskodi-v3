@@ -219,7 +219,7 @@ class ChannelPlayer():
         downloadPath = self.getDownloadPath()
         if not downloadPath: return
         item.targetPath = downloadPath
-        item.url = self.getChanUrl(program.channel,force_rtmp=False,for_download=True)
+        item.url = self.getChanUrl(int(program.channel_number),force_rtmp=False,for_download=True)
         item.direct = util.getSetting('direct_record',True)
         item.start = program.start
         item.offset = UTCOffset()
