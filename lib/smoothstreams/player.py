@@ -177,7 +177,7 @@ class ChannelPlayer():
             program = item.currentProgram()
 
         if program and program.isAiring():
-            url = self.getChanUrl(program.channel,force_rtmp=False,for_download=True)
+            url = self.getChanUrl(int(program.channel_number),force_rtmp=False,for_download=True)
             duration = program.minutesLeft()
             title = program.title + time.strftime(' - %H:%M:%S'.format(util.TIME_DISPLAY),time.localtime())
         else:
