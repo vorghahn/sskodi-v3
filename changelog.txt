@@ -5,6 +5,9 @@ ChangeLog: Version (YYYY-MM-DD)
 
 Upcoming/Known issues:
 
+** v3.2.2  (2017-04-05) **
+- [Fixed]: Sometime epg were showing previous day events.
+
 ** v3.2.1  (2017-03-21) **
 - [Fixed] Download functionality
 

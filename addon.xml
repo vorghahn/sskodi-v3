@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.2.1"
+       version="3.2.2"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -17,6 +17,8 @@
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
         <news>Upcoming/Known issues:
+v3.2.2  (2017-04-05)
+            - [Fixed]: Sometime epg were showing previous day events.
 v3.2.1  (2017-03-21)
             - [Fixed] Recording functionality
 v3.1.9  (2017-02-22)
