@@ -104,9 +104,18 @@ class ViewManager(object):
         self.window.timerCallback()
 
     def reloadChannels(self,force=False):
-        return
-        if self.schedule.sscachejson(force):
-            self.updateChannels()
+        fetch = {   'guide':'feed-new-latest.zip',
+                    'guide_json':'feed-new.json',
+                    'full_guide':'feed-new-full-latest.zip',
+                    'full_guide_json':'feed-new-full.json'}
+        LIST = util.getSetting('mode')
+        if util.getSetting('full_guide_switch') == 'false' or LIST == "List":
+            smoothstreams.Schedule.sscachejson(fetch['guide'],fetch['guide_json'],age=3600)
+        else:
+            smoothstreams.Schedule.sscachejson(fetch['full_guide'],fetch['full_guide_json'],age=3600)
+            
+        #if self.schedule.sscachejson(force):
+        #    self.updateChannels()
 
     def updateChannels(self):
         self.channels = self.schedule.epg(self.startOfDay())
