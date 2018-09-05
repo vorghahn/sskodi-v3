@@ -89,7 +89,7 @@
 			<!-- Small Top Labels -->
 			<control type="group">
 				<left>20</left>
-				<top>256</top>
+				<top>136</top>
 				<control type="image">
 					<left>0</left>
 					<top>25</top>
@@ -114,7 +114,7 @@
 			</control>
 			<control type="group">
 				<left>20</left>
-				<top>240</top>
+				<top>120</top>
 				<control type="label">
 					<left>10</left>
 					<top>0</top>
@@ -207,9 +207,9 @@
 				 	<effect type="slide" start="350,0" end="0,0" time="300" tween="quadratic" easing="out" />
 				</animation>
 				<left>-330</left>
-				<top>296</top>
+				<top>176</top>
 				<width>1240</width>
-				<height>386</height>
+				<height>514</height>
 				<onright>101</onright>
 				<scrolltime tween="sine" easing="out">300</scrolltime>
 				<itemlayout width="1240" height="64">
