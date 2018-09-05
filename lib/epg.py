@@ -999,7 +999,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                     elif start % 60 > 52 and start % 60 < 60:
                         start += 60 - (start % 60)
                 
-                if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
+                if (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
 
                     gridTime = start - self.manager.displayOffset
                     
