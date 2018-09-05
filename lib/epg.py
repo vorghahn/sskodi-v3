@@ -324,7 +324,7 @@ class ViewManager(object):
         last_view = util.getSetting('last_mode')
         dialog.addItem('cat','List')
         dialog.addItem('epg','EPG')
-        if util.getSetting('theme') == 'modern':
+        if util.getSetting('theme') == 'true':
             dialog.addItem('panel','PANEL')
         result = dialog.getResult()
         
