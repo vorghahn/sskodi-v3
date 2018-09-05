@@ -115,7 +115,7 @@ class ViewManager(object):
             smoothstreams.Schedule.sscachejson(fetch['full_guide'],fetch['full_guide_json'],age=3600)
             
         #if self.schedule.sscachejson(force):
-        #    self.updateChannels()
+        self.updateChannels()
 
     def updateChannels(self):
         self.channels = self.schedule.epg(self.startOfDay())
@@ -1036,7 +1036,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         if util.getSetting('auto_advance',True) and self.timeIndicator.showing:
             util.DEBUG_LOG('EPG: Auto advance: Day change - resetting displayOffset')
             self.manager.initDisplayOffset()
-            self.manager.displayOffset -= 150 #So time indicator is still on the last half hour
+            # self.manager.displayOffset -= 150 #So time indicator is still on the last half hour
         self.updateEPG()
         self.updateSelection(self.selectionTime)
         return True
