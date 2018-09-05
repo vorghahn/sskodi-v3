@@ -980,6 +980,24 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 if duration % 10 != 0:
                     duration += 15'''
 
+                #Fix for programs not starting at either 0/15/30/45
+                if start % 60 != 0 or start % 60 != 15 or start % 60 != 30 or start % 60 != 45:
+                    if start % 60 > 0 and start % 60 <= 7:
+                        start -= start % 60
+                    elif start % 60 > 7 and start % 60 < 15:
+                        start += 15 - (start % 60)
+                    elif start % 60 > 15 and start % 60 <= 22:
+                        start -= (start % 60) - 15
+                    elif start % 60 > 22 and start % 60 < 30:
+                        start += 30 - (start % 60)
+                    elif start % 60 > 30 and start % 60 <= 37:
+                        start -= (start % 60) - 30
+                    elif start % 60 > 37 and start % 60 < 45:
+                        start += 45 - (start % 60)
+                    elif start % 60 > 45 and start % 60 <= 52:
+                        start -= (start % 60) - 45
+                    elif start % 60 > 52 and start % 60 < 60:
+                        start += 60 - (start % 60)
                 
                 if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
 
