@@ -278,6 +278,7 @@ class ViewManager(object):
             d.addItem('stop_download','Stop Recording')
         if not DownloadRegistry().empty():
             d.addItem('view_recordings','View Recordings')
+        d.addItem('changeView','Change View')
         d.addItem('settings','Settings')
         if (util.getSetting('back_opens_context',False) or util.getSetting('show_fullscreen_option',False)) and xbmc.getCondVisibility('Player.HasVideo'):
             d.addItem('fullscreen','Fullscreen Video')
