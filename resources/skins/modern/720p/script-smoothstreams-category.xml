@@ -53,6 +53,7 @@
 				<height>82</height>
 				<texture>$INFO[System.AddonIcon(script.smoothstreams-v3)]</texture>
 			</control>
+			<!--
 			<control type="label">
 				<left>105</left>
 				<top>44</top>
@@ -64,12 +65,13 @@
 				<shadowcolor>77000000</shadowcolor>
 				<label>[B]$ADDON[script.smoothstreams-v3 32001][/B]</label>
 			</control>
+			-->
 			<control type="label">
 				<left>1000</left>
-				<top>00</top>
+				<top>0</top>
 				<width>240</width>
 				<height>50</height>
-				<font>font14</font>
+				<font>font12</font>
 				<align>right</align>
 				<aligny>center</aligny>
 				<textcolor>DDFFFFFF</textcolor>
@@ -106,9 +108,18 @@
 				<control type="image">
 					<left>0</left>
 					<top>25</top>
+					<width>1494</width>
+					<height>1</height>
+					<texture colordiffuse="FF555555">white.png</texture>
+					<animation effect="fade" start="100" end="0" time="300" condition="!ControlGroup(100).HasFocus">Conditional</animation>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>25</top>
 					<width>1140</width>
 					<height>1</height>
 					<texture colordiffuse="FF555555">white.png</texture>
+					<animation effect="fade" start="100" end="0" time="300" condition="ControlGroup(100).HasFocus">Conditional</animation>
 				</control>
 				<control type="image">
 					<left>172</left>
@@ -177,7 +188,7 @@
 						<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 					<control type="image">
-						<left>32r</left>
+						<left>0r</left>
 						<top>19</top>
 						<width>10</width>
 						<height>14</height>
@@ -185,8 +196,8 @@
 						<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 					<control type="label">
-						<left>353r</left>
-						<top>0</top>
+						<left>260r</left>
+						<top>1</top>
 						<width>315</width>
 						<height>50</height>
 						<font>font12</font>
@@ -194,18 +205,7 @@
 						<aligny>center</aligny>
 						<textcolor>99FFFFFF</textcolor>
 						<label>$ADDON[script.smoothstreams-v3 32005]</label>
-						<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
-					</control>
-					<control type="label">
-						<left>121r</left>
-						<top>0</top>
-						<width>315</width>
-						<height>50</height>
-						<font>font12</font>
-						<align>left</align>
-						<aligny>center</aligny>
-						<textcolor>99FFFFFF</textcolor>
-						<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(100).HasFocus">Conditional</animation>
+						<animation effect="fade" start="0" end="100" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 				</control>
 			</control>
