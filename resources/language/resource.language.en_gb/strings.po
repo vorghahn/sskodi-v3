@@ -1,0 +1,582 @@
+# Kodi Media Center language file
+# Addon Name: Smoothstreams v3 
+# Addon id: script.smoothstreams-v3
+# Addon Provider: Smoothstreams
+msgid ""
+msgstr ""
+
+# Panel / List view
+msgctxt "#32001"
+msgid "EPG"
+msgstr ""
+
+msgctxt "#32001"
+msgid "Channels"
+msgstr ""
+
+msgctxt "#32002"
+msgid "Time"
+msgstr ""
+
+msgctxt "#32003"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#32004"
+msgid "Select Categories"
+msgstr ""
+
+msgctxt "#32005"
+msgid "Back"
+msgstr ""
+
+msgctxt "#32006"
+msgid "Events"
+msgstr ""
+
+# Recording
+msgctxt "#32007"
+msgid "Name of recording"
+msgstr ""
+
+msgctxt "#32008"
+msgid "Number of minutes to record"
+msgstr ""
+
+# Settings
+msgctxt "#32200"
+msgid "Settings"
+msgstr ""
+
+msgctxt "#32201"
+msgid "Username"
+msgstr ""
+
+msgctxt "#32202"
+msgid "Password"
+msgstr ""
+
+msgctxt "#32203"
+msgid "High Quality video"
+msgstr ""
+
+msgctxt "#32204"
+msgid "Server Location"
+msgstr ""
+
+msgctxt "#32205"
+msgid "Server Type"
+msgstr ""
+
+msgctxt "#32206"
+msgid "Schedule + days"
+msgstr ""
+
+msgctxt "#32207"
+msgid "GMT Offset"
+msgstr ""
+
+msgctxt "#32208"
+msgid "Offset + 30 minutes"
+msgstr ""
+
+msgctxt "#32209"
+msgid "Daylight Saving Time"
+msgstr ""
+
+msgctxt "#32210"
+msgid "EU Random"
+msgstr ""
+
+msgctxt "#32211"
+msgid "US East Random"
+msgstr ""
+
+msgctxt "#32212"
+msgid "Asia"
+msgstr ""
+
+msgctxt "#32213"
+msgid "RTMP"
+msgstr ""
+
+msgctxt "#32214"
+msgid "HLS"
+msgstr ""
+
+msgctxt "#32215"
+msgid "Schedule - days"
+msgstr ""
+
+msgctxt "#32216"
+msgid "Recording location"
+msgstr ""
+
+msgctxt "#32217"
+msgid "Debug"
+msgstr ""
+
+msgctxt "#32218"
+msgid "Service"
+msgstr ""
+
+msgctxt "#32219"
+msgid "Auto select server"
+msgstr ""
+
+msgctxt "#32220"
+msgid "Show Now/Next in channels"
+msgstr ""
+
+msgctxt "#32223"
+msgid "Select Region"
+msgstr ""
+
+msgctxt "#32224"
+msgid "Account"
+msgstr ""
+
+msgctxt "#32225"
+msgid "Server"
+msgstr ""
+
+msgctxt "#32226"
+msgid "Options General"
+msgstr ""
+
+msgctxt "#32227"
+msgid "Start video as preview"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Show version options when selecting a program"
+msgstr ""
+
+msgctxt "#32235"
+msgid "Options Visual"
+msgstr ""
+
+msgctxt "#32300"
+msgid "Auto"
+msgstr ""
+
+msgctxt "#32301"
+msgid "GMT+0"
+msgstr ""
+
+msgctxt "#32302"
+msgid "GMT+1"
+msgstr ""
+
+msgctxt "#32303"
+msgid "GMT+2"
+msgstr ""
+
+msgctxt "#32304"
+msgid "GMT+3"
+msgstr ""
+
+msgctxt "#32305"
+msgid "GMT+4"
+msgstr ""
+
+msgctxt "#32306"
+msgid "GMT+5"
+msgstr ""
+
+msgctxt "#32307"
+msgid "GMT+6"
+msgstr ""
+
+msgctxt "#32308"
+msgid "GMT+7"
+msgstr ""
+
+msgctxt "#32309"
+msgid "GMT+8"
+msgstr ""
+
+msgctxt "#32310"
+msgid "GMT+9"
+msgstr ""
+
+msgctxt "#32311"
+msgid "GMT+10"
+msgstr ""
+
+msgctxt "#32312"
+msgid "GMT+11"
+msgstr ""
+
+msgctxt "#32313"
+msgid "GMT+12"
+msgstr ""
+
+msgctxt "#32314"
+msgid "GMT-1"
+msgstr ""
+
+msgctxt "#32315"
+msgid "GMT-2"
+msgstr ""
+
+msgctxt "#32316"
+msgid "GMT-3"
+msgstr ""
+
+msgctxt "#32317"
+msgid "GMT-4"
+msgstr ""
+
+msgctxt "#32318"
+msgid "GMT-5"
+msgstr ""
+
+msgctxt "#32319"
+msgid "GMT-6"
+msgstr ""
+
+msgctxt "#32320"
+msgid "GMT-7"
+msgstr ""
+
+msgctxt "#32321"
+msgid "GMT-8"
+msgstr ""
+
+msgctxt "#32322"
+msgid "GMT-9"
+msgstr ""
+
+msgctxt "#32323"
+msgid "GMT-10"
+msgstr ""
+
+msgctxt "#32324"
+msgid "GMT-11"
+msgstr ""
+
+msgctxt "#32325"
+msgid "GMT-12"
+msgstr ""
+
+msgctxt "#32326"
+msgid "Advanced"
+msgstr ""
+
+msgctxt "#32328"
+msgid "Live247"
+msgstr ""
+
+msgctxt "#32330"
+msgid "StarStreams"
+msgstr ""
+
+msgctxt "#32332"
+msgid "MMA-TV SR+"
+msgstr ""
+
+msgctxt "#32333"
+msgid "Controls"
+msgstr ""
+
+msgctxt "#32334"
+msgid "Recording"
+msgstr ""
+
+msgctxt "#32335"
+msgid "StreamTVnow"
+msgstr ""
+
+# Categories
+msgctxt "#32400"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#32401"
+msgid "American Football"
+msgstr ""
+
+msgctxt "#32402"
+msgid "NCAAF"
+msgstr ""
+
+msgctxt "#32403"
+msgid "NFL"
+msgstr ""
+
+msgctxt "#32404"
+msgid "Baseball"
+msgstr ""
+
+msgctxt "#32405"
+msgid "Basketball"
+msgstr ""
+
+msgctxt "#32406"
+msgid "NBA"
+msgstr ""
+
+msgctxt "#32407"
+msgid "NCAAB"
+msgstr ""
+
+msgctxt "#32408"
+msgid "Boxing + MMA"
+msgstr ""
+
+msgctxt "#32409"
+msgid "Cricket"
+msgstr ""
+
+msgctxt "#32410"
+msgid "Golf"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Ice Hockey"
+msgstr ""
+
+msgctxt "#32412"
+msgid "Motor Sports"
+msgstr ""
+
+msgctxt "#32413"
+msgid "Formula 1"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Nascar"
+msgstr ""
+
+msgctxt "#32415"
+msgid "Olympics"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Other Sports"
+msgstr ""
+
+msgctxt "#32417"
+msgid "Rugby"
+msgstr ""
+
+msgctxt "#32418"
+msgid "Tennis"
+msgstr ""
+
+msgctxt "#32419"
+msgid "TV Shows"
+msgstr ""
+
+msgctxt "#32420"
+msgid "World Football"
+msgstr ""
+
+msgctxt "#32421"
+msgid "Wrestling"
+msgstr ""
+
+# Schedule
+msgctxt "#32500"
+msgid "Schedules"
+msgstr ""
+
+msgctxt "#32501"
+msgid "Airs Today"
+msgstr ""
+
+msgctxt "#32503"
+msgid "Ice Hockey"
+msgstr ""
+
+msgctxt "#32504"
+msgid "Basketball"
+msgstr ""
+
+msgctxt "#32505"
+msgid "Baseball"
+msgstr ""
+
+msgctxt "#32506"
+msgid "Boxing/MMA"
+msgstr ""
+
+msgctxt "#32507"
+msgid "Cricket"
+msgstr ""
+
+msgctxt "#32508"
+msgid "Golf"
+msgstr ""
+
+msgctxt "#32509"
+msgid "Motor Sport"
+msgstr ""
+
+msgctxt "#32510"
+msgid "Olympics"
+msgstr ""
+
+msgctxt "#32511"
+msgid "Other Sports"
+msgstr ""
+
+msgctxt "#32512"
+msgid "Rugby"
+msgstr ""
+
+msgctxt "#32513"
+msgid "World Football"
+msgstr ""
+
+msgctxt "#32514"
+msgid "Tennis"
+msgstr ""
+
+msgctxt "#32515"
+msgid "TV Shows"
+msgstr ""
+
+msgctxt "#32516/
+msgid "Wrestling"
+msgstr ""
+
+msgctxt "#32517"
+msgid "American Football"
+msgstr ""
+
+# Plugin messages
+msgctxt "#32600"
+msgid "Error"
+msgstr ""
+
+msgctxt "#32601"
+msgid "Download folder not set"
+msgstr ""
+
+msgctxt "#32602"
+msgid "Deauthenticate IP"
+msgstr ""
+
+msgctxt "#32603"
+msgid "Login failure"
+msgstr ""
+
+# Regions
+msgctxt "#32651"
+msgid "North America"
+msgstr ""
+
+msgctxt "#32652"
+msgid "South America"
+msgstr ""
+
+msgctxt "#32653"
+msgid "Europe"
+msgstr ""
+
+msgctxt "#32654"
+msgid "Asia"
+msgstr ""
+
+msgctxt "#32655"
+msgid "Middle East & Africa"
+msgstr ""
+
+# Servers
+msgctxt "#32700"
+msgid "Euro Mix"
+msgstr ""
+
+msgctxt "#32701"
+msgid "Euro NL Mix"
+msgstr ""
+
+msgctxt "#32702"
+msgid "Euro UK Mix"
+msgstr ""
+
+msgctxt "#32718"
+msgid "Euro DE Mix"
+msgstr ""
+
+msgctxt "#32703"
+msgid "EU UK1 (io)"
+msgstr ""
+
+msgctxt "#32704"
+msgid "EU UK2 (100TB)"
+msgstr ""
+
+msgctxt "#32705"
+msgid "EU NL1 (i3d)"
+msgstr ""
+
+msgctxt "#32706"
+msgid "EU NL2 (i3d)"
+msgstr ""
+
+msgctxt "#32707"
+msgid "EU NL3 (Ams)"
+msgstr ""
+
+msgctxt "#32708"
+msgid "NA Mix"
+msgstr ""
+
+msgctxt "#32709"
+msgid "NA East Mix"
+msgstr ""
+
+msgctxt "#32710"
+msgid "NA West Mix"
+msgstr ""
+
+msgctxt "#32711"
+msgid "NA East 1 (NJ)"
+msgstr ""
+
+msgctxt "#32712"
+msgid "NA East 2 (VA)"
+msgstr ""
+
+msgctxt "#32713"
+msgid "NA East 3 (MTL)"
+msgstr ""
+
+msgctxt "#32714"
+msgid "NA East 4 (TOR)"
+msgstr ""
+
+msgctxt "#32719"
+msgid "NA East 5 (NY)"
+msgstr ""
+
+msgctxt "#32715"
+msgid "NA West 1 (PHX)"
+msgstr ""
+
+msgctxt "#32720"
+msgid "NA West 2 (LA)"
+msgstr ""
+
+msgctxt "#32716"
+msgid "NA West 3 (SJ)"
+msgstr ""
+
+msgctxt "#32721"
+msgid "NA West 4 (CHI)"
+msgstr ""
+
+msgctxt "#32717"
+msgid "Asia Mix"
+msgstr ""
+
+msgctxt "#32722"
+msgid "Asia SG 1 (SL)"
+msgstr ""
+
+msgctxt "#32723"
+msgid "Asia SG 2 (OVH)"
+msgstr ""

@@ -55,7 +55,7 @@
 				<aligny>center</aligny>
 				<textcolor>FFF36523</textcolor>
 				<shadowcolor>77000000</shadowcolor>
-				<label>[B]$ADDON[script.smoothstreams-v3 32001][/B]</label>
+				<label>[B]$ADDON[script.smoothstreams-v3 32006][/B]</label>
 			</control>
 			<control type="label">
 				<left>20</left>
@@ -106,7 +106,7 @@
 					<font>font12</font>
 					<aligny>center</aligny>
 					<textcolor>FFF36523</textcolor>
-					<label>$INFO[Window.Property(category), [COLOR=99FFFFFF]$ADDON[script.smoothstreams-v3 30400]:[/COLOR] ]</label>
+					<label>$INFO[Window.Property(category), [COLOR=99FFFFFF]$ADDON[script.smoothstreams-v3 32003]:[/COLOR] ]</label>
 				</control>
 			</control>
 			<control type="group">
@@ -144,7 +144,7 @@
 						<align>right</align>
 						<aligny>center</aligny>
 						<textcolor>99FFFFFF</textcolor>
-						<label>$ADDON[script.smoothstreams-v3 32002]</label>
+						<label>$ADDON[script.smoothstreams-v3 32004]</label>
 						<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 					<control type="label">
@@ -156,7 +156,7 @@
 						<align>left</align>
 						<aligny>center</aligny>
 						<textcolor>99FFFFFF</textcolor>
-						<label>$ADDON[script.smoothstreams-v3 32004]</label>
+						<label>$ADDON[script.smoothstreams-v3 32005]</label>
 						<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 				</control>
