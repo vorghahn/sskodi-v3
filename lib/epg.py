@@ -326,7 +326,7 @@ class ViewManager(object):
         dialog.addItem('cat','List')
         dialog.addItem('epg','EPG')
         if util.getSetting('theme') == 'true':
-            dialog.addItem('panel','PANEL')
+            dialog.addItem('panel','Panel')
         result = dialog.getResult()
         
         if result == 'cat':
