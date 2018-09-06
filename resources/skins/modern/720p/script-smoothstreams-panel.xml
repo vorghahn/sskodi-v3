@@ -90,7 +90,7 @@
 			<!-- Small Top Labels -->
 			<control type="group">
 				<left>23</left>
-				<top>130</top>
+				<top>10</top>
 				<control type="image">
 					<left>0</left>
 					<top>150</top>
@@ -111,7 +111,7 @@
 			</control>
 			<control type="group">
 				<left>20</left>
-				<top>240</top>
+				<top>120</top>
 				<control type="group">
 					<animation type="Conditional" condition="!ControlGroup(100).HasFocus" reversible="false">
 					 <effect type="slide" start="-216,0" end="0,0" time="300" tween="quadratic" easing="out" />
@@ -171,9 +171,9 @@
 				 	<effect type="slide" start="350,0" end="0,0" time="300" tween="quadratic" easing="out" />
 				</animation>
 				<left>-326</left>
-				<top>296</top>
+				<top>176</top>
 				<width>1240</width>
-				<height>390</height>
+				<height>510</height>
 				<onright>101</onright>
 				<scrolltime tween="sine" easing="out">300</scrolltime>
 				<itemlayout width="248" height="130">
