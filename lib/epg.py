@@ -1687,7 +1687,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                         else:
                             t = str(timeDisp)
                             disp_time = 'Today, ' + t
-                    item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['logo'],data_source=program)
+                    item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['old_logo'],data_source=program)
                     sort = (((start * 1440) + stop ) * 100) + program.channel
                     if stop <= timeInDay:
                         item.setProperty('old','old')

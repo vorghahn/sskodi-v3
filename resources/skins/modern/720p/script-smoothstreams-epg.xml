@@ -86,12 +86,21 @@
 					<texture border="4">channel_logo_bg.png</texture>
 				</control>
 				<control type="image">
-					<left>10</left>
-					<top>10</top>
-					<width>142</width>
-					<height>52</height>
+					<left>28</left>
+					<top>-18</top>
+					<width>110</width>
+					<height>110</height>
 					<aspectratio>keep</aspectratio>
-					<texture fallback="fallback_logo.png">$INFO[Container(101).ListItem.Icon]</texture>
+					<texture>$INFO[Container(101).ListItem.Icon]</texture>
+				</control>
+				<control type="image">
+					<left>53</left>
+					<top>8</top>
+					<width>56</width>
+					<height>56</height>
+					<aspectratio>keep</aspectratio>
+					<visible>String.IsEqual(Container(101).ListItem.Icon, "https://fast-guide.smoothstreams.tv/assets/images/channels/") | String.IsEqual(Container(101).ListItem.Icon, "http://fast-guide.smoothstreams.tv/assets/images/channels/")</visible>
+					<texture>fallback_logo.png</texture>
 				</control>
 			</control>
 			<control type="group">

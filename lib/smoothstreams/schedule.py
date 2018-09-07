@@ -103,10 +103,11 @@ CATSUBS = { 'American Football':('- NCAAF','- NFL'),
 #==============================================================================
 class SSChannel(dict):
     _ssType = 'CHANNEL'
-    def init(self, displayname,logo,ID):
+    def init(self, displayname,logo,old_logo,ID):
         self['ID'] = ID
         self['display-name'] = displayname
         self['logo'] = logo
+        self['old_logo'] = old_logo
         return self
 
     def currentProgram(self):
@@ -372,7 +373,8 @@ class Schedule:
             cid = int(k)
             displayname = fix_text(fix_text(v['name'].strip()))
             logo = LOGOBASE.format(v['img_kodi'])
-            tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('number'))
+            old_logo = LOGOBASE.format(v['img'])
+            tmp_channels[cid] = SSChannel().init(displayname,logo,old_logo,v.get('number'))
             
         #Sort channel according to its id
         def getKey(item):
