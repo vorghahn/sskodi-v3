@@ -175,7 +175,7 @@ class SSProgram(object):
         
         self.channel = int(data['channel'])
         self.channel_number = channel_number
-        self.title = fix_text(data['name'])
+        self.title = data['name']
         self.network = data.get('network','')
         self.language = data.get('language','')[:2].upper()
         self.description = fix_text(data.get('description',''))
@@ -370,8 +370,8 @@ class Schedule:
         # iterate over items.
         for (k, v) in tree.items():
             cid = int(k)
-            displayname = v['name']
             logo = LOGOBASE.format(v['img'])
+            displayname = fix_text(fix_text(v['name'].strip()))
             tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('number'))
             
         #Sort channel according to its id
