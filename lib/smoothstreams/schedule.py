@@ -370,8 +370,8 @@ class Schedule:
         # iterate over items.
         for (k, v) in tree.items():
             cid = int(k)
-            logo = LOGOBASE.format(v['img'])
             displayname = fix_text(fix_text(v['name'].strip()))
+            logo = LOGOBASE.format(v['img_kodi'])
             tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('number'))
             
         #Sort channel according to its id
