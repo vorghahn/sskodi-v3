@@ -15,10 +15,6 @@
 			<animation type="WindowClose" reversible="false">
 				<effect type="fade" start="100" end="0" time="250"/>
 			</animation>
-			<control type="videowindow">
-				<width>100%</width>
-				<height>100%</height>
-			</control>
 			<control type="image">
 				<width>100%</width>
 				<height>100%</height>
@@ -56,6 +52,12 @@
 				<textcolor>FFF36523</textcolor>
 				<shadowcolor>77000000</shadowcolor>
 				<label>[B]$ADDON[script.smoothstreams-v3 32006][/B]</label>
+			</control>
+			<control type="videowindow">
+				<left>516</left>
+				<top>10</top>
+				<width>248</width>
+				<height>140</height>
 			</control>
 			<control type="label">
 				<left>20</left>
