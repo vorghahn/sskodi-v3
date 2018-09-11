@@ -33,7 +33,7 @@
   </category>
   <!--Option Visual-->
   <category label="32235">
-    <setting id="theme" type="bool" label="Enable Modern Theme" default="false" />
+    <setting id="theme" type="bool" label="Enable Modern Theme" default="true" />
     <setting id="mode" type="select" label="Change Skin Mode" values="List|EPG|Panel" default="List" visible="eq(-1,true)"/>
     <setting id="12_hour_times" type="bool" label="12H Time Format" default="false" />
     <setting id="show_video_preview" type="bool" label="Show video preview" default="true" />
