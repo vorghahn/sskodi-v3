@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.2.2"
+       version="3.3.0"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -17,6 +17,19 @@
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
         <news>Upcoming/Known issues:
+v3.3.0  (2018-09-11)
+            - Modern theme is now used as default
+            - Use high res logos in EPG view
+            - Fix double html escaping on some channels
+            - Add video preview in all views
+            - Update localization to new Kodi format
+            - Add quality switch in context menu
+            - Update list and panel views design
+            - [Fixed]: Remove filters from being used in EPG view
+            - [Fixed]: Programs not starting at either 0/15/30/45 were not showing up in EPG view
+            - Add quick change view option in context menu
+            - [Fixed]: Wrong setting used to hide or show panel view option
+            - [Fixed]: Events going awol past midnight in EPG view
 v3.2.2  (2017-04-05)
             - [Fixed]: Sometime epg were showing previous day events.
 v3.2.1  (2017-03-21)
