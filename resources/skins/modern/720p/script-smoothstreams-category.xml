@@ -18,6 +18,7 @@
 			<control type="videowindow">
 				<width>100%</width>
 				<height>100%</height>
+				<visible>!String.IsEmpty(Window.Property(hide_video_preview))</visible>
 			</control>
 			<control type="image">
 				<width>100%</width>
@@ -726,6 +727,13 @@
 			</control>
 		</control>
 
+		<control type="videowindow">
+			<right>20</right>
+			<bottom>20</bottom>
+			<width>371</width>
+			<height>220</height>!
+			<visible>String.IsEmpty(Window.Property(hide_video_preview))</visible>
+		</control>
 
 		<control type="image">
 			<animation type="WindowOpen" reversible="false">
