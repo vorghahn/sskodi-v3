@@ -115,7 +115,7 @@ class ViewManager(object):
             smoothstreams.Schedule.sscachejson(fetch['full_guide'],fetch['full_guide_json'],age=3600)
             
         #if self.schedule.sscachejson(force):
-        #    self.updateChannels()
+        self.updateChannels()
 
     def updateChannels(self):
         self.channels = self.schedule.epg(self.startOfDay())
@@ -278,6 +278,8 @@ class ViewManager(object):
             d.addItem('stop_download','Stop Recording')
         if not DownloadRegistry().empty():
             d.addItem('view_recordings','View Recordings')
+        d.addItem('changeQuality', 'Change Quality')
+        d.addItem('changeView','Change View')
         d.addItem('settings','Settings')
         if (util.getSetting('back_opens_context',False) or util.getSetting('show_fullscreen_option',False)) and xbmc.getCondVisibility('Player.HasVideo'):
             d.addItem('fullscreen','Fullscreen Video')
@@ -314,18 +316,29 @@ class ViewManager(object):
             self.changeTheme(selection)
         elif selection == 'changeView':
             self.changeView(selection)
+        elif selection == 'changeQuality':
+            self.changeQuality(selection)
         elif selection == 'exit':
             self.mode = None
             self.window.close()
             if util.getSetting('fullscreen_on_exit',True): self.fullscreenVideo()
+    
+    def changeQuality(self,quality):
+        dialog = util.xbmcDialogSelect('Change Quality')
+        dialog.addItem('hd','High Definition')
+        dialog.addItem('ld','Low Definition')
+        result = dialog.getResult()
+
+        util.setSetting('high_def', result == 'hd')
+        return
 
     def changeView(self,view):
         dialog = util.xbmcDialogSelect('Change View')
         last_view = util.getSetting('last_mode')
         dialog.addItem('cat','List')
         dialog.addItem('epg','EPG')
-        if util.getSetting('theme') == 'modern':
-            dialog.addItem('panel','PANEL')
+        if util.getSetting('theme') == 'true':
+            dialog.addItem('panel','Panel')
         result = dialog.getResult()
         
         if result == 'cat':
@@ -979,8 +992,26 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 if duration % 10 != 0:
                     duration += 15'''
 
+                #Fix for programs not starting at either 0/15/30/45
+                if start % 60 != 0 or start % 60 != 15 or start % 60 != 30 or start % 60 != 45:
+                    if start % 60 > 0 and start % 60 <= 7:
+                        start -= start % 60
+                    elif start % 60 > 7 and start % 60 < 15:
+                        start += 15 - (start % 60)
+                    elif start % 60 > 15 and start % 60 <= 22:
+                        start -= (start % 60) - 15
+                    elif start % 60 > 22 and start % 60 < 30:
+                        start += 30 - (start % 60)
+                    elif start % 60 > 30 and start % 60 <= 37:
+                        start -= (start % 60) - 30
+                    elif start % 60 > 37 and start % 60 < 45:
+                        start += 45 - (start % 60)
+                    elif start % 60 > 45 and start % 60 <= 52:
+                        start -= (start % 60) - 45
+                    elif start % 60 > 52 and start % 60 < 60:
+                        start += 60 - (start % 60)
                 
-                if (categories is None or program.category in categories or program.subcategory in  categories) and (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
+                if (start >= self.manager.lowerLimit or stop > self.manager.lowerLimit) and start < self.manager.upperLimit:
 
                     gridTime = start - self.manager.displayOffset
                     
@@ -1036,7 +1067,7 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         if util.getSetting('auto_advance',True) and self.timeIndicator.showing:
             util.DEBUG_LOG('EPG: Auto advance: Day change - resetting displayOffset')
             self.manager.initDisplayOffset()
-            self.manager.displayOffset -= 150 #So time indicator is still on the last half hour
+            # self.manager.displayOffset -= 150 #So time indicator is still on the last half hour
         self.updateEPG()
         self.updateSelection(self.selectionTime)
         return True
@@ -1656,7 +1687,7 @@ class KodiListDialog(BaseWindow,util.CronReceiver):
                         else:
                             t = str(timeDisp)
                             disp_time = 'Today, ' + t
-                    item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['logo'],data_source=program)
+                    item = kodigui.ManagedListItem(program.title,disp_time,iconImage=channel['old_logo'],data_source=program)
                     sort = (((start * 1440) + stop ) * 100) + program.channel
                     if stop <= timeInDay:
                         item.setProperty('old','old')

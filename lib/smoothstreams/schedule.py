@@ -103,10 +103,11 @@ CATSUBS = { 'American Football':('- NCAAF','- NFL'),
 #==============================================================================
 class SSChannel(dict):
     _ssType = 'CHANNEL'
-    def init(self, displayname,logo,ID):
+    def init(self, displayname,logo,old_logo,ID):
         self['ID'] = ID
         self['display-name'] = displayname
         self['logo'] = logo
+        self['old_logo'] = old_logo
         return self
 
     def currentProgram(self):
@@ -175,7 +176,7 @@ class SSProgram(object):
         
         self.channel = int(data['channel'])
         self.channel_number = channel_number
-        self.title = fix_text(data['name'])
+        self.title = data['name']
         self.network = data.get('network','')
         self.language = data.get('language','')[:2].upper()
         self.description = fix_text(data.get('description',''))
@@ -370,9 +371,10 @@ class Schedule:
         # iterate over items.
         for (k, v) in tree.items():
             cid = int(k)
-            displayname = v['name']
-            logo = LOGOBASE.format(v['img'])
-            tmp_channels[cid] = SSChannel().init(displayname,logo, v.get('number'))
+            displayname = fix_text(fix_text(v['name'].strip()))
+            logo = LOGOBASE.format(v['img_kodi'])
+            old_logo = LOGOBASE.format(v['img'])
+            tmp_channels[cid] = SSChannel().init(displayname,logo,old_logo,v.get('number'))
             
         #Sort channel according to its id
         def getKey(item):

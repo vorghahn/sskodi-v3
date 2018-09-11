@@ -18,6 +18,7 @@
 			<control type="videowindow">
 				<width>100%</width>
 				<height>100%</height>
+				<visible>!String.IsEmpty(Window.Property(hide_video_preview))</visible>
 			</control>
 			<control type="image">
 				<width>100%</width>
@@ -39,13 +40,21 @@
 				<effect type="slide" start="0,0" end="0,-35" time="300" tween="quadratic" easing="out"/>
 				<effect type="fade" start="100" end="0" time="250"/>
 			</animation>
+			<!-- SSTV Logo -->
 			<control type="image">
+				<animation type="Conditional" condition="ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="0,0" end="-354,0" time="300" tween="quadratic" easing="out" />
+				</animation>
+				<animation type="Conditional" condition="!ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="-354,0" end="0,0" time="300" tween="quadratic" easing="out" />
+				</animation> 
 				<left>12</left>
 				<top>20</top>
 				<width>96</width>
 				<height>82</height>
 				<texture>$INFO[System.AddonIcon(script.smoothstreams-v3)]</texture>
 			</control>
+			<!--
 			<control type="label">
 				<left>105</left>
 				<top>44</top>
@@ -57,12 +66,13 @@
 				<shadowcolor>77000000</shadowcolor>
 				<label>[B]$ADDON[script.smoothstreams-v3 32001][/B]</label>
 			</control>
+			-->
 			<control type="label">
-				<left>20</left>
-				<top>44</top>
-				<width>1240</width>
+				<left>1000</left>
+				<top>0</top>
+				<width>240</width>
 				<height>50</height>
-				<font>font14</font>
+				<font>font12</font>
 				<align>right</align>
 				<aligny>center</aligny>
 				<textcolor>DDFFFFFF</textcolor>
@@ -88,14 +98,29 @@
 
 			<!-- Small Top Labels -->
 			<control type="group">
-				<left>20</left>
-				<top>256</top>
+				<animation type="Conditional" condition="ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="0,0" end="-354,0" time="300" tween="quadratic" easing="out" />
+				</animation>
+				<animation type="Conditional" condition="!ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="-354,0" end="0,0" time="300" tween="quadratic" easing="out" />
+				</animation> 
+				<left>120</left>
+				<top>16</top>
 				<control type="image">
 					<left>0</left>
 					<top>25</top>
-					<width>1240</width>
+					<width>1494</width>
 					<height>1</height>
 					<texture colordiffuse="FF555555">white.png</texture>
+					<animation effect="fade" start="100" end="0" time="300" condition="!ControlGroup(100).HasFocus">Conditional</animation>
+				</control>
+				<control type="image">
+					<left>0</left>
+					<top>25</top>
+					<width>1140</width>
+					<height>1</height>
+					<texture colordiffuse="FF555555">white.png</texture>
+					<animation effect="fade" start="100" end="0" time="300" condition="ControlGroup(100).HasFocus">Conditional</animation>
 				</control>
 				<control type="image">
 					<left>172</left>
@@ -113,8 +138,14 @@
 				</control>
 			</control>
 			<control type="group">
-				<left>20</left>
-				<top>240</top>
+				<animation type="Conditional" condition="ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="0,0" end="-354,0" time="300" tween="quadratic" easing="out" />
+				</animation>
+				<animation type="Conditional" condition="!ControlGroup(100).HasFocus" reversible="false" >
+					<effect type="slide" start="-354,0" end="0,0" time="300" tween="quadratic" easing="out" />
+				</animation> 
+				<left>120</left>
+				<top>0</top>
 				<control type="label">
 					<left>10</left>
 					<top>0</top>
@@ -124,7 +155,7 @@
 					<align>center</align>
 					<aligny>center</aligny>
 					<textcolor>99FFFFFF</textcolor>
-					<label>$ADDON[script.smoothstreams-v3 30100]</label>
+					<label>$ADDON[script.smoothstreams-v3 32001]</label>
 				</control>
 				<control type="label">
 					<left>180</left>
@@ -135,7 +166,7 @@
 					<align>center</align>
 					<aligny>center</aligny>
 					<textcolor>99FFFFFF</textcolor>
-					<label>$ADDON[script.smoothstreams-v3 32003]</label>
+					<label>$ADDON[script.smoothstreams-v3 32002]</label>
 				</control>
 				<control type="label">
 					<left>345</left>
@@ -145,18 +176,12 @@
 					<font>font12</font>
 					<aligny>center</aligny>
 					<textcolor>FFF36523</textcolor>
-					<label>$INFO[Window.Property(category), [COLOR=99FFFFFF]$ADDON[script.smoothstreams-v3 30400]:[/COLOR] ]</label>
+					<label>$INFO[Window.Property(category), [COLOR=99FFFFFF]$ADDON[script.smoothstreams-v3 32003]:[/COLOR] ]</label>
 				</control>
 
 				<control type="group">
-					<animation type="Conditional" condition="!ControlGroup(100).HasFocus" reversible="false">
-					 <effect type="slide" start="-216,0" end="0,0" time="300" tween="quadratic" easing="out" />
-					</animation>
-					<animation type="Conditional" condition="ControlGroup(100).HasFocus" reversible="false">
-					 <effect type="slide" start="0,0" end="-216,0" time="300" tween="quadratic" easing="out" />
-					</animation>
 					<control type="image">
-						<left>32r</left>
+						<left>34r</left>
 						<top>19</top>
 						<width>10</width>
 						<height>14</height>
@@ -164,7 +189,7 @@
 						<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 					<control type="image">
-						<left>138r</left>
+						<left>0r</left>
 						<top>19</top>
 						<width>10</width>
 						<height>14</height>
@@ -172,28 +197,16 @@
 						<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 					<control type="label">
-						<left>353r</left>
-						<top>0</top>
+						<left>260r</left>
+						<top>1</top>
 						<width>315</width>
 						<height>50</height>
 						<font>font12</font>
 						<align>right</align>
 						<aligny>center</aligny>
 						<textcolor>99FFFFFF</textcolor>
-						<label>$ADDON[script.smoothstreams-v3 32002]</label>
-						<animation effect="fade" start="100" end="0" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
-					</control>
-					<control type="label">
-						<left>121r</left>
-						<top>0</top>
-						<width>315</width>
-						<height>50</height>
-						<font>font12</font>
-						<align>left</align>
-						<aligny>center</aligny>
-						<textcolor>99FFFFFF</textcolor>
-						<label>$ADDON[script.smoothstreams-v3 32004]</label>
-						<animation effect="fade" start="100" end="0" time="200" condition="!ControlGroup(100).HasFocus">Conditional</animation>
+						<label>$ADDON[script.smoothstreams-v3 32005]</label>
+						<animation effect="fade" start="0" end="100" time="200" condition="ControlGroup(100).HasFocus">Conditional</animation>
 					</control>
 				</control>
 			</control>
@@ -206,13 +219,13 @@
 				<animation type="Conditional" condition="ControlGroup(100).HasFocus" reversible="false">
 				 	<effect type="slide" start="350,0" end="0,0" time="300" tween="quadratic" easing="out" />
 				</animation>
-				<left>-330</left>
-				<top>296</top>
-				<width>1240</width>
-				<height>386</height>
+				<left>-230</left>
+				<top>56</top>
+				<width>1140</width>
+				<height>640</height>
 				<onright>101</onright>
 				<scrolltime tween="sine" easing="out">300</scrolltime>
-				<itemlayout width="1240" height="64">
+				<itemlayout width="1140" height="64">
 					<!-- Left Part -->
 					<control type="image">
 						<left>0</left>
@@ -385,7 +398,7 @@
 						<colordiffuse>A0000000</colordiffuse>
 					</control>
 				</itemlayout>
-				<focusedlayout width="1240" height="64">
+				<focusedlayout width="1140" height="64">
 					<control type="group">
 						<animation type="Focus" reversible="false" condition="Container(201).OnPrevious">
 							<effect type="slide" start="0,35" end="0,0" time="300" tween="back" easing="out"/>
@@ -568,12 +581,12 @@
 
 			<!-- Addon Version -->
 			<control type="label">
-				<left>20</left>
+				<left>10</left>
 				<top>670</top>
 				<width>1240</width>
 				<height>50</height>
 				<font>font12</font>
-				<align>right</align>
+				<align>left</align>
 				<aligny>center</aligny>
 				<textcolor>40FFFFFF</textcolor>
 				<shadowcolor>77000000</shadowcolor>
@@ -714,6 +727,13 @@
 			</control>
 		</control>
 
+		<control type="videowindow">
+			<right>20</right>
+			<bottom>20</bottom>
+			<width>371</width>
+			<height>220</height>!
+			<visible>String.IsEmpty(Window.Property(hide_video_preview))</visible>
+		</control>
 
 		<control type="image">
 			<animation type="WindowOpen" reversible="false">
