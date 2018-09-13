@@ -49,8 +49,8 @@
 			<control type="videowindow">
 				<right>20</right>
 				<top>0</top>
-				<width>371</width>
-				<height>220</height>
+				<width>354</width>
+				<height>200</height>
 			</control>
 			<control type="group">
 				<left>-35</left>
