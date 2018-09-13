@@ -134,7 +134,7 @@ class ViewManager(object):
     def getChannel(self, number):
         if str(number).startswith('0'):
             number = str(number)[1]
-        for c in self.channels:
+        for c in self.channels if util.getSetting('mode') == 'EPG' else self.channels1:
             if number == c.get('ID'):
                 return c
 
@@ -818,6 +818,12 @@ class OverlayDialog(BaseDialog):
                 xbmc.executebuiltin('Action(Back)')
             elif action == xbmcgui.ACTION_BUILT_IN_FUNCTION:
                 xbmc.executebuiltin('ActivateWindow(12901)')
+            elif action == xbmcgui.ACTION_PAGE_UP:
+                channel = self.manager.getChannel(str(self.manager.player.channelCurrentlyPlaying - 1))
+                self.manager.player.playFromChannel(channel)
+            elif action == xbmcgui.ACTION_PAGE_DOWN:
+                channel = self.manager.getChannel(str(self.manager.player.channelCurrentlyPlaying + 1))
+                self.manager.player.playFromChannel(channel)
 
             if self.manager.checkChannelEntry(action):
                 return

@@ -118,6 +118,10 @@ class SSChannel(dict):
     @property
     def title(self):
         return self['display-name']
+    
+    @property
+    def channelNumber(self):
+        return int(self['ID'])
 
 #==============================================================================
 # SSProgram
@@ -234,6 +238,10 @@ class SSProgram(object):
         if not self.isAiring(): return 0
         timeInDay = timeutils.timeInDayLocalSeconds()/60
         return self.epg.stop - timeInDay
+    
+    @property
+    def channelNumber(self):
+        return int(self.channel_number)
 
 #==============================================================================
 # Schedule
