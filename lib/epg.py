@@ -1799,7 +1799,7 @@ class KodiChannelEntry(BaseDialog):
     def finish(self):
         self.digits = int(self.digits)
         self.set = True
-        for channel in self.manager.channels:
+        for channel in self.manager.channels if util.getSetting('mode') == 'EPG' else self.manager.channels1:
             if channel['ID'] == str(self.digits):
                 self.manager.player.play(channel)
                 break
