@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.smoothstreams-v3"
        name="SmoothStreams.tv-v3"
-       version="3.3.0"
+       version="3.3.1"
        provider-name="SmoothStreams">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -17,6 +17,12 @@
         <description lang="en">SmoothStreams.tv Official Kodi Addon</description>
         <disclaimer lang="en"></disclaimer>
         <news>Upcoming/Known issues:
+v3.3.1  (2018-09-13)
+            - Fix wront values being used for GMT Offset setting
+            - Update video preview panel size in EPG view
+            - Fix channel entry dialog
+            - Add quick zapping with page up/down keys (needs OSD Overlay + fullscreen on exit settings enabled)
+            - Fix EPG navigation between programs
 v3.3.0  (2018-09-11)
             - Modern theme is now used as default
             - Use high res logos in EPG view
