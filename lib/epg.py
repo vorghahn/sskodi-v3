@@ -134,7 +134,7 @@ class ViewManager(object):
     def getChannel(self, number):
         if str(number).startswith('0'):
             number = str(number)[1]
-        for c in self.channels:
+        for c in self.channels if util.getSetting('mode') == 'EPG' else self.channels1:
             if number == c.get('ID'):
                 return c
 
@@ -334,7 +334,6 @@ class ViewManager(object):
 
     def changeView(self,view):
         dialog = util.xbmcDialogSelect('Change View')
-        last_view = util.getSetting('last_mode')
         dialog.addItem('cat','List')
         dialog.addItem('epg','EPG')
         if util.getSetting('theme') == 'true':
@@ -818,6 +817,12 @@ class OverlayDialog(BaseDialog):
                 xbmc.executebuiltin('Action(Back)')
             elif action == xbmcgui.ACTION_BUILT_IN_FUNCTION:
                 xbmc.executebuiltin('ActivateWindow(12901)')
+            elif action == xbmcgui.ACTION_PAGE_UP:
+                channel = self.manager.getChannel(str(self.manager.player.channelCurrentlyPlaying - 1))
+                self.manager.player.playFromChannel(channel)
+            elif action == xbmcgui.ACTION_PAGE_DOWN:
+                channel = self.manager.getChannel(str(self.manager.player.channelCurrentlyPlaying + 1))
+                self.manager.player.playFromChannel(channel)
 
             if self.manager.checkChannelEntry(action):
                 return
@@ -1101,6 +1106,9 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
                 if self.manager.handlePreClose(): return
             elif action == xbmcgui.ACTION_RECORD:
                 self.manager.record()
+            #elif action == xbmcgui.ACTION_SHOW_GUI:
+            #    if xbmc.getCondVisibility('Player.HasVideo'):
+            #        self.activateOverlay()
 
             if self.manager.checkChannelEntry(action):
                 return
@@ -1160,6 +1168,8 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
         self.updateSelection(sel)
 
     def updateSelection(self,selection):
+        #print('--- update selection routine ---')
+        #print('selection requested:', str(selection))
         self.setProperty('selection_time',str(selection))
         offset = smoothstreams.timeutils.TIMEZONE_OFFSET
         todayStr = datetime.datetime.strftime(datetime.datetime.fromtimestamp(self.manager.startOfDay() + offset + ((self.manager.displayOffset + self.selectionTime) * 60)),'%a %d')
@@ -1192,63 +1202,102 @@ class KodiEPGDialog(BaseWindow,util.CronReceiver):
             self.setProperty('program_flag','')
 
     def nextItem(self):
-        if self.manager.displayOffset + 150 >= self.manager.upperLimit: return
-        if self.wholePageLR:
-            self.manager.displayOffset+=180
-            self.selectionTime = 0
-        else:
-            self.manager.displayOffset+=30
+        self.selectionTime = 0
+        self.manager.displayOffset+=150
+        #self.manager.displayOffset+=self.selectionTime
+        #if self.selectionTime > 150:
+        #    self.selectionTime = 0
+        #    self.manager.displayOffset+=150
+        #else:
+        #    print('inside upper limit')
+        #    self.manager.displayOffset+=self.selectionTime
+        #if self.manager.displayOffset + 150 >= self.manager.upperLimit: return
+        #if self.wholePageLR:
+        #    self.manager.displayOffset+=self.selectionTime
+        #    self.selectionTime = 0
+        #else:
+        #    self.manager.displayOffset+=30
         self.updateEPG()
 
     def prevItem(self):
-        if self.manager.displayOffset <= self.manager.lowerLimit: return
-        if self.wholePageLR:
-            self.manager.displayOffset-=180
-            self.selectionTime = 150
-        else:
-            self.manager.displayOffset-=30
+        self.selectionTime = 150
+        self.manager.displayOffset-=150
+        #if self.manager.displayOffset <= self.manager.lowerLimit: return
+        #if self.wholePageLR:
+        #    self.manager.displayOffset-=180
+        #    self.selectionTime = 150
+        #else:
+        #    self.manager.displayOffset-=30
         self.updateEPG()
 
     def moveRight(self):
-        
-        move = 30
+        move = 0
         try:
             program,grid = self.getSelectedProgram1()
             if program:
+                #print('selected program', program.title)
                 duration = program.duration/60
-                selection_time = self.getProperty('selection_time')
-                if duration > 30:
-                    if grid == int(selection_time):
-                        move = duration
-                    elif grid < int(selection_time):
-                        d = int(selection_time) - grid
-                        move = duration - d
+                #print('duration', str(duration))
+                selection = self.getProperty('selection_time')
+                #print('selection', str(selection))
+                #print('epg start', str(program.epg.start))
+                epg_end = program.epg.start + duration
+                #print('epg end', str(epg_end))
+                #print('display offset', str(self.manager.displayOffset))
+                if (self.manager.displayOffset > program.epg.start):
+                    #print('not the beginning of this show! getting remaining to move:')
+                    move = duration - (self.manager.displayOffset - program.epg.start)
+                elif ((program.epg.start - self.manager.displayOffset) != int(selection)):
+                    #print('in the middle?')
+                    move = duration - int(selection)
+                else:
+                    move = duration
         except:
             pass
-        
-        self.selectionTime += move
-        if self.selectionTime > 150:
-            self.selectionTime = 150
+        self.selectionTime += move if move > 0 else 30
+        #print('move', str(move))
+        #print('new selection time calculated', str(self.selectionTime))
+        if self.selectionTime >= 150:
+            self.selectionTime = 0
             self.nextItem()
         self.updateSelection(self.selectionTime)
 
     def moveLeft(self):
-        move = 30
+        move = 0
         try:
             program,grid = self.getSelectedProgram1()
             if program:
+                #print('selected program', program.title)
                 duration = program.duration/60
-                selection_time = self.getProperty('selection_time')
-                if duration > 30:
-                    if grid == int(selection_time):
-                        move = 30
-                    elif grid < int(selection_time):
-                        move = int(selection_time) - grid + 30
+                #print('duration', str(duration))
+                selection = self.getProperty('selection_time')
+                #print('selection', str(selection))
+                #print('epg start', str(program.epg.start))
+                epg_end = program.epg.start + duration
+                #print('epg end', str(epg_end))
+                #print('display offset', str(self.manager.displayOffset))
+                if (self.manager.displayOffset > program.epg.start):
+                    #print('not the beginning of this show! getting remaining to move:')
+                    move = int(selection) + (self.manager.displayOffset - program.epg.start)
+                elif ((program.epg.start - self.manager.displayOffset) != int(selection)):
+                    #print('in the middle?')
+                    move = int(selection) - duration + 30
+                    move = int(selection) - (program.epg.start - self.manager.displayOffset) + 30
+            #if program:
+            #    duration = program.duration/60
+            #    selection_time = self.getProperty('selection_time')
+            #    if duration > 30:
+            #        if grid == int(selection_time):
+            #            move = 30
+            #        elif grid < int(selection_time):
+            #            move = int(selection_time) - grid + 30
         except:
             pass
-
-        self.selectionTime -= move
+        self.selectionTime -= move if move > 0 else 30
+        #print('move', str(move))
+        #print('new selection time calculated', str(self.selectionTime))
         if self.selectionTime < 0:
+            #print('selectionTime < 0 - update to 0 and prev page')
             self.selectionTime = 0
             self.prevItem()
         self.updateSelection(self.selectionTime)
@@ -1799,7 +1848,7 @@ class KodiChannelEntry(BaseDialog):
     def finish(self):
         self.digits = int(self.digits)
         self.set = True
-        for channel in self.manager.channels:
+        for channel in self.manager.channels if util.getSetting('mode') == 'EPG' else self.manager.channels1:
             if channel['ID'] == str(self.digits):
                 self.manager.player.play(channel)
                 break

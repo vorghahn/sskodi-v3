@@ -106,6 +106,7 @@ class ChannelPlayer():
         self.userAgent = user_agent
         self.player = xbmc.Player()
         self.session = requests.Session()
+        self.channelCurrentlyPlaying = -1
 
     def _play(self,url,item):
         self.player.play(url,item,util.getSetting('show_video_preview',True) and util.getSetting('start_video_preview',False),0)
@@ -244,8 +245,13 @@ class ChannelPlayer():
     @property
     def service(self):
         return self.services[self.serviceIDX]
+    
+    @property
+    def channelCurrentlyPlaying(self):
+        return self.channelCurrentlyPlaying
 
     def getChanUrl(self, chan, force_rtmp=False, for_download=False, force_hls=False):
+        self.channelCurrentlyPlaying = int(chan)
         service = self.service
         server_sett = 'server_r' + str(util.getSetting('server_region',0))
         server = util.getSetting(server_sett)
